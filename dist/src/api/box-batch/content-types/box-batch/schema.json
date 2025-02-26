@@ -1,0 +1,39 @@
+{
+    "kind": "collectionType",
+    "collectionName": "box_batches",
+    "info": {
+        "singularName": "box-batch",
+        "pluralName": "box-batches",
+        "displayName": "boxBatch"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "attributes": {
+        "actions": {
+            "type": "relation",
+            "relation": "manyToMany",
+            "target": "api::action.action",
+            "inversedBy": "box_batches"
+        },
+        "boxCode": {
+            "type": "string"
+        },
+        "plant": {
+            "type": "relation",
+            "relation": "oneToOne",
+            "target": "api::plant.plant"
+        },
+        "amount": {
+            "type": "integer"
+        },
+        "state": {
+            "type": "enumeration",
+            "enum": [
+                "packed",
+                "delivered",
+                "returned"
+            ]
+        }
+    }
+}

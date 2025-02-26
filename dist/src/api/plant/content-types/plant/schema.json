@@ -1,0 +1,23 @@
+{
+    "kind": "collectionType",
+    "collectionName": "plants",
+    "info": {
+        "singularName": "plant",
+        "pluralName": "plants",
+        "displayName": "Plant"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "attributes": {
+        "code": {
+            "type": "string"
+        },
+        "name": {
+            "type": "string"
+        },
+        "typeName": {
+            "type": "string"
+        }
+    }
+}

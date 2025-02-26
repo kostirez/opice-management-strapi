@@ -1,0 +1,42 @@
+{
+    "kind": "collectionType",
+    "collectionName": "batches",
+    "info": {
+        "singularName": "batch",
+        "pluralName": "batches",
+        "displayName": "Batch"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "attributes": {
+        "plantsToGrow": {
+            "type": "component",
+            "repeatable": true,
+            "component": "grow.plant-batch"
+        },
+        "dueToDate": {
+            "type": "datetime"
+        },
+        "order": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::order.order",
+            "inversedBy": "batches"
+        },
+        "state": {
+            "type": "enumeration",
+            "enum": [
+                "waiting",
+                "running",
+                "done"
+            ]
+        },
+        "actions": {
+            "type": "relation",
+            "relation": "oneToMany",
+            "target": "api::action.action",
+            "mappedBy": "batch"
+        }
+    }
+}

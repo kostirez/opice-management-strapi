@@ -1,0 +1,19 @@
+{
+    "collectionName": "components_office_addresses",
+    "info": {
+        "displayName": "address",
+        "icon": "house"
+    },
+    "options": {},
+    "attributes": {
+        "street": {
+            "type": "string"
+        },
+        "city": {
+            "type": "string"
+        },
+        "postCode": {
+            "type": "string"
+        }
+    }
+}

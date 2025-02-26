@@ -1,0 +1,18 @@
+{
+    "collectionName": "components_grow_plant_batches",
+    "info": {
+        "displayName": "PlantBatch",
+        "icon": "seed"
+    },
+    "options": {},
+    "attributes": {
+        "plant": {
+            "type": "relation",
+            "relation": "oneToOne",
+            "target": "api::plant.plant"
+        },
+        "amount": {
+            "type": "integer"
+        }
+    }
+}

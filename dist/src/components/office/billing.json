@@ -1,0 +1,25 @@
+{
+    "collectionName": "components_office_billings",
+    "info": {
+        "displayName": "billing",
+        "icon": "briefcase",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "officialName": {
+            "type": "string"
+        },
+        "address": {
+            "type": "component",
+            "repeatable": false,
+            "component": "office.address"
+        },
+        "ico": {
+            "type": "biginteger"
+        },
+        "dic": {
+            "type": "biginteger"
+        }
+    }
+}

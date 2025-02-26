@@ -1,0 +1,34 @@
+{
+    "kind": "collectionType",
+    "collectionName": "customers",
+    "info": {
+        "singularName": "customer",
+        "pluralName": "customers",
+        "displayName": "Customer",
+        "description": ""
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "attributes": {
+        "billing": {
+            "type": "component",
+            "repeatable": false,
+            "component": "office.billing"
+        },
+        "deliveryAddress": {
+            "type": "component",
+            "repeatable": false,
+            "component": "office.address"
+        },
+        "name": {
+            "type": "string"
+        },
+        "orders": {
+            "type": "relation",
+            "relation": "oneToMany",
+            "target": "api::order.order",
+            "mappedBy": "customer"
+        }
+    }
+}

@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "tray_batches",
+  "info": {
+    "singularName": "tray-batch",
+    "pluralName": "tray-batches",
+    "displayName": "TrayBatch",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "actions": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::action.action",
+      "inversedBy": "trayBatches"
+    },
+    "trayCode": {
+      "type": "string"
+    },
+    "plant": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::plant.plant"
+    },
+    "expectedGain": {
+      "type": "integer"
+    },
+    "realGain": {
+      "type": "integer"
+    },
+    "active": {
+      "type": "boolean"
+    },
+    "placeCode": {
+      "type": "string"
+    }
+  }
+}

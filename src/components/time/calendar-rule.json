@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_time_calendar_rules",
+  "info": {
+    "displayName": "CalendarRule",
+    "icon": "calendar"
+  },
+  "options": {},
+  "attributes": {
+    "daysInWeek": {
+      "type": "enumeration",
+      "enum": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat",
+        "sun"
+      ]
+    },
+    "until": {
+      "type": "date"
+    },
+    "preferTimeOfDelivery": {
+      "type": "time"
+    }
+  }
+}

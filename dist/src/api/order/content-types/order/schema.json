@@ -1,0 +1,43 @@
+{
+    "kind": "collectionType",
+    "collectionName": "orders",
+    "info": {
+        "singularName": "order",
+        "pluralName": "orders",
+        "displayName": "Order",
+        "description": ""
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "attributes": {
+        "customer": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::customer.customer",
+            "inversedBy": "orders"
+        },
+        "active": {
+            "type": "boolean"
+        },
+        "firstDelivery": {
+            "type": "date"
+        },
+        "plantsToGrow": {
+            "type": "component",
+            "repeatable": true,
+            "component": "grow.plant-batch"
+        },
+        "deliveryTimes": {
+            "type": "component",
+            "repeatable": false,
+            "component": "time.calendar-rule"
+        },
+        "batches": {
+            "type": "relation",
+            "relation": "oneToMany",
+            "target": "api::batch.batch",
+            "mappedBy": "order"
+        }
+    }
+}
