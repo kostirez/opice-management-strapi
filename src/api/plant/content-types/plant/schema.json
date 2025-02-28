@@ -4,7 +4,8 @@
   "info": {
     "singularName": "plant",
     "pluralName": "plants",
-    "displayName": "Plant"
+    "displayName": "Plant",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -18,6 +19,9 @@
     },
     "typeName": {
       "type": "string"
+    },
+    "timeToGrow": {
+      "type": "integer"
     }
   }
 }

@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_time_days_in_weeks",
+  "info": {
+    "displayName": "DaysInWeek",
+    "icon": "medium"
+  },
+  "options": {},
+  "attributes": {
+    "day": {
+      "type": "enumeration",
+      "enum": [
+        "mon",
+        "tue",
+        "wed",
+        "thu",
+        "fri",
+        "sat",
+        "sun"
+      ]
+    }
+  }
+}

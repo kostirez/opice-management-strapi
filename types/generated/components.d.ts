@@ -43,15 +43,27 @@ export interface OfficeBilling extends Struct.ComponentSchema {
 export interface TimeCalendarRule extends Struct.ComponentSchema {
   collectionName: 'components_time_calendar_rules';
   info: {
+    description: '';
     displayName: 'CalendarRule';
     icon: 'calendar';
   };
   attributes: {
-    daysInWeek: Schema.Attribute.Enumeration<
-      ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
-    >;
+    daysInWeek: Schema.Attribute.Component<'time.days-in-week', true>;
     preferTimeOfDelivery: Schema.Attribute.Time;
     until: Schema.Attribute.Date;
+  };
+}
+
+export interface TimeDaysInWeek extends Struct.ComponentSchema {
+  collectionName: 'components_time_days_in_weeks';
+  info: {
+    displayName: 'DaysInWeek';
+    icon: 'medium';
+  };
+  attributes: {
+    day: Schema.Attribute.Enumeration<
+      ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+    >;
   };
 }
 
@@ -62,6 +74,7 @@ declare module '@strapi/strapi' {
       'office.address': OfficeAddress;
       'office.billing': OfficeBilling;
       'time.calendar-rule': TimeCalendarRule;
+      'time.days-in-week': TimeDaysInWeek;
     }
   }
 }

@@ -539,6 +539,7 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
 export interface ApiPlantPlant extends Struct.CollectionTypeSchema {
   collectionName: 'plants';
   info: {
+    description: '';
     displayName: 'Plant';
     pluralName: 'plants';
     singularName: 'plant';
@@ -556,6 +557,7 @@ export interface ApiPlantPlant extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     name: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    timeToGrow: Schema.Attribute.Integer;
     typeName: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

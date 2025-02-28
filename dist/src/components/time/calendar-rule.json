@@ -2,27 +2,21 @@
     "collectionName": "components_time_calendar_rules",
     "info": {
         "displayName": "CalendarRule",
-        "icon": "calendar"
+        "icon": "calendar",
+        "description": ""
     },
     "options": {},
     "attributes": {
-        "daysInWeek": {
-            "type": "enumeration",
-            "enum": [
-                "mon",
-                "tue",
-                "wed",
-                "thu",
-                "fri",
-                "sat",
-                "sun"
-            ]
-        },
         "until": {
             "type": "date"
         },
         "preferTimeOfDelivery": {
             "type": "time"
+        },
+        "daysInWeek": {
+            "type": "component",
+            "repeatable": true,
+            "component": "time.days-in-week"
         }
     }
 }
