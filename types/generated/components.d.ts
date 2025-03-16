@@ -1,13 +1,34 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface GrowActionTime extends Struct.ComponentSchema {
+  collectionName: 'components_grow_action_times';
+  info: {
+    description: '';
+    displayName: 'ActionTime';
+    icon: 'rocket';
+  };
+  attributes: {
+    actionType: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::action-type.action-type'
+    >;
+    daysBeforeHarvest: Schema.Attribute.Integer;
+  };
+}
+
 export interface GrowPlantBatch extends Struct.ComponentSchema {
   collectionName: 'components_grow_plant_batches';
   info: {
+    description: '';
     displayName: 'PlantBatch';
     icon: 'seed';
   };
   attributes: {
     amount: Schema.Attribute.Integer;
+    growStrategy: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::grow-strategy.grow-strategy'
+    >;
     plant: Schema.Attribute.Relation<'oneToOne', 'api::plant.plant'>;
   };
 }
@@ -70,6 +91,7 @@ export interface TimeDaysInWeek extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'grow.action-time': GrowActionTime;
       'grow.plant-batch': GrowPlantBatch;
       'office.address': OfficeAddress;
       'office.billing': OfficeBilling;

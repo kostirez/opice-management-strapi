@@ -369,9 +369,38 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiActionTypeActionType extends Struct.CollectionTypeSchema {
+  collectionName: 'action_types';
+  info: {
+    displayName: 'actionType';
+    pluralName: 'action-types';
+    singularName: 'action-type';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::action-type.action-type'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiActionAction extends Struct.CollectionTypeSchema {
   collectionName: 'actions';
   info: {
+    description: '';
     displayName: 'Action';
     pluralName: 'actions';
     singularName: 'action';
@@ -380,6 +409,10 @@ export interface ApiActionAction extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    action_type: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::action-type.action-type'
+    >;
     batch: Schema.Attribute.Relation<'manyToOne', 'api::batch.batch'>;
     box_batches: Schema.Attribute.Relation<
       'manyToMany',
@@ -402,9 +435,6 @@ export interface ApiActionAction extends Struct.CollectionTypeSchema {
     trayBatches: Schema.Attribute.Relation<
       'manyToMany',
       'api::tray-batch.tray-batch'
-    >;
-    type: Schema.Attribute.Enumeration<
-      ['seeding', 'check', 'harvest', 'delivery', 'cleaning']
     >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -498,6 +528,37 @@ export interface ApiCustomerCustomer extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     name: Schema.Attribute.String;
     orders: Schema.Attribute.Relation<'oneToMany', 'api::order.order'>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiGrowStrategyGrowStrategy
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'grow_strategies';
+  info: {
+    description: '';
+    displayName: 'growStrategy';
+    pluralName: 'grow-strategies';
+    singularName: 'grow-strategy';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    actions: Schema.Attribute.Component<'grow.action-time', true>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::grow-strategy.grow-strategy'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1109,10 +1170,12 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::action-type.action-type': ApiActionTypeActionType;
       'api::action.action': ApiActionAction;
       'api::batch.batch': ApiBatchBatch;
       'api::box-batch.box-batch': ApiBoxBatchBoxBatch;
       'api::customer.customer': ApiCustomerCustomer;
+      'api::grow-strategy.grow-strategy': ApiGrowStrategyGrowStrategy;
       'api::order.order': ApiOrderOrder;
       'api::plant.plant': ApiPlantPlant;
       'api::tray-batch.tray-batch': ApiTrayBatchTrayBatch;

@@ -1,0 +1,23 @@
+{
+  "kind": "collectionType",
+  "collectionName": "grow_strategies",
+  "info": {
+    "singularName": "grow-strategy",
+    "pluralName": "grow-strategies",
+    "displayName": "growStrategy",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "actions": {
+      "type": "component",
+      "repeatable": true,
+      "component": "grow.action-time"
+    },
+    "name": {
+      "type": "string"
+    }
+  }
+}
