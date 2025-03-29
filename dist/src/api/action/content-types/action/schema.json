@@ -4,7 +4,8 @@
     "info": {
         "singularName": "action",
         "pluralName": "actions",
-        "displayName": "Action"
+        "displayName": "Action",
+        "description": ""
     },
     "options": {
         "draftAndPublish": true
@@ -15,16 +16,6 @@
             "relation": "manyToOne",
             "target": "api::batch.batch",
             "inversedBy": "actions"
-        },
-        "type": {
-            "type": "enumeration",
-            "enum": [
-                "seeding",
-                "check",
-                "harvest",
-                "delivery",
-                "cleaning"
-            ]
         },
         "state": {
             "type": "enumeration",
@@ -56,6 +47,11 @@
             "relation": "manyToMany",
             "target": "api::box-batch.box-batch",
             "mappedBy": "actions"
+        },
+        "action_type": {
+            "type": "relation",
+            "relation": "oneToOne",
+            "target": "api::action-type.action-type"
         }
     }
 }
