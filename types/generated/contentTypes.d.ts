@@ -372,12 +372,13 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
 export interface ApiActionTypeActionType extends Struct.CollectionTypeSchema {
   collectionName: 'action_types';
   info: {
+    description: '';
     displayName: 'actionType';
     pluralName: 'action-types';
     singularName: 'action-type';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     createdAt: Schema.Attribute.DateTime;
@@ -406,7 +407,7 @@ export interface ApiActionAction extends Struct.CollectionTypeSchema {
     singularName: 'action';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     action_type: Schema.Attribute.Relation<
@@ -445,12 +446,13 @@ export interface ApiActionAction extends Struct.CollectionTypeSchema {
 export interface ApiBatchBatch extends Struct.CollectionTypeSchema {
   collectionName: 'batches';
   info: {
+    description: '';
     displayName: 'Batch';
     pluralName: 'batches';
     singularName: 'batch';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     actions: Schema.Attribute.Relation<'oneToMany', 'api::action.action'>;
@@ -474,12 +476,13 @@ export interface ApiBatchBatch extends Struct.CollectionTypeSchema {
 export interface ApiBoxBatchBoxBatch extends Struct.CollectionTypeSchema {
   collectionName: 'box_batches';
   info: {
+    description: '';
     displayName: 'boxBatch';
     pluralName: 'box-batches';
     singularName: 'box-batch';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     actions: Schema.Attribute.Relation<'manyToMany', 'api::action.action'>;
@@ -512,7 +515,7 @@ export interface ApiCustomerCustomer extends Struct.CollectionTypeSchema {
     singularName: 'customer';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     billing: Schema.Attribute.Component<'office.billing', false>;
@@ -545,7 +548,7 @@ export interface ApiGrowStrategyGrowStrategy
     singularName: 'grow-strategy';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     actions: Schema.Attribute.Component<'grow.action-time', true>;
@@ -575,7 +578,7 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     singularName: 'order';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     active: Schema.Attribute.Boolean;
@@ -606,7 +609,7 @@ export interface ApiPlantPlant extends Struct.CollectionTypeSchema {
     singularName: 'plant';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     code: Schema.Attribute.String;
@@ -635,7 +638,7 @@ export interface ApiTrayBatchTrayBatch extends Struct.CollectionTypeSchema {
     singularName: 'tray-batch';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     actions: Schema.Attribute.Relation<'manyToMany', 'api::action.action'>;

@@ -4,10 +4,11 @@
   "info": {
     "singularName": "action-type",
     "pluralName": "action-types",
-    "displayName": "actionType"
+    "displayName": "actionType",
+    "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "attributes": {
     "name": {
