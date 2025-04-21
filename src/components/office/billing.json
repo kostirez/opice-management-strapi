@@ -19,7 +19,7 @@
       "type": "biginteger"
     },
     "dic": {
-      "type": "biginteger"
+      "type": "string"
     }
   }
 }

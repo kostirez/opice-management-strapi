@@ -57,7 +57,7 @@ export interface OfficeBilling extends Struct.ComponentSchema {
   };
   attributes: {
     address: Schema.Attribute.Component<'office.address', false>;
-    dic: Schema.Attribute.BigInteger;
+    dic: Schema.Attribute.String;
     ico: Schema.Attribute.BigInteger;
     officialName: Schema.Attribute.String;
   };
