@@ -1,0 +1,26 @@
+{
+  "kind": "singleType",
+  "collectionName": "my_billings",
+  "info": {
+    "singularName": "my-billing",
+    "pluralName": "my-billings",
+    "displayName": "myBilling",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "billing": {
+      "type": "component",
+      "repeatable": false,
+      "component": "office.billing"
+    },
+    "bankNum": {
+      "type": "string"
+    },
+    "account": {
+      "type": "string"
+    }
+  }
+}

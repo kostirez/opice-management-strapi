@@ -36,11 +36,13 @@ export interface GrowPlantBatch extends Struct.ComponentSchema {
 export interface OfficeAddress extends Struct.ComponentSchema {
   collectionName: 'components_office_addresses';
   info: {
+    description: '';
     displayName: 'address';
     icon: 'house';
   };
   attributes: {
     city: Schema.Attribute.String;
+    country: Schema.Attribute.String;
     postCode: Schema.Attribute.String;
     street: Schema.Attribute.String;
   };
@@ -58,6 +60,18 @@ export interface OfficeBilling extends Struct.ComponentSchema {
     dic: Schema.Attribute.BigInteger;
     ico: Schema.Attribute.BigInteger;
     officialName: Schema.Attribute.String;
+  };
+}
+
+export interface OfficePlantPrice extends Struct.ComponentSchema {
+  collectionName: 'components_office_plant_prices';
+  info: {
+    displayName: 'PlantPrice';
+    icon: 'priceTag';
+  };
+  attributes: {
+    plant: Schema.Attribute.Relation<'oneToOne', 'api::plant.plant'>;
+    price: Schema.Attribute.Integer;
   };
 }
 
@@ -95,6 +109,7 @@ declare module '@strapi/strapi' {
       'grow.plant-batch': GrowPlantBatch;
       'office.address': OfficeAddress;
       'office.billing': OfficeBilling;
+      'office.plant-price': OfficePlantPrice;
       'time.calendar-rule': TimeCalendarRule;
       'time.days-in-week': TimeDaysInWeek;
     }

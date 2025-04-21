@@ -17,9 +17,6 @@
       "target": "api::action.action",
       "inversedBy": "box_batches"
     },
-    "boxCode": {
-      "type": "string"
-    },
     "plant": {
       "type": "relation",
       "relation": "oneToOne",
@@ -35,6 +32,11 @@
         "delivered",
         "returned"
       ]
+    },
+    "boxes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::box.box"
     }
   }
 }

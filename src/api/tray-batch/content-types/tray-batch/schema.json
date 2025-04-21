@@ -17,9 +17,6 @@
       "target": "api::action.action",
       "inversedBy": "trayBatches"
     },
-    "trayCode": {
-      "type": "string"
-    },
     "plant": {
       "type": "relation",
       "relation": "oneToOne",
@@ -31,11 +28,10 @@
     "realGain": {
       "type": "integer"
     },
-    "active": {
-      "type": "boolean"
-    },
-    "placeCode": {
-      "type": "string"
+    "trays": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::tray.tray"
     }
   }
 }

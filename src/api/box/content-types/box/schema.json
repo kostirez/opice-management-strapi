@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "boxes",
+  "info": {
+    "singularName": "box",
+    "pluralName": "boxes",
+    "displayName": "Box"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "code": {
+      "type": "string"
+    },
+    "used": {
+      "type": "boolean"
+    },
+    "place": {
+      "type": "enumeration",
+      "enum": [
+        "stock",
+        "packed",
+        "delivering",
+        "customer",
+        "returning",
+        "wash"
+      ]
+    }
+  }
+}

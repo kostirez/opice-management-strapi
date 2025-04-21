@@ -487,7 +487,7 @@ export interface ApiBoxBatchBoxBatch extends Struct.CollectionTypeSchema {
   attributes: {
     actions: Schema.Attribute.Relation<'manyToMany', 'api::action.action'>;
     amount: Schema.Attribute.Integer;
-    boxCode: Schema.Attribute.String;
+    boxes: Schema.Attribute.Relation<'oneToMany', 'api::box.box'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -503,6 +503,35 @@ export interface ApiBoxBatchBoxBatch extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+  };
+}
+
+export interface ApiBoxBox extends Struct.CollectionTypeSchema {
+  collectionName: 'boxes';
+  info: {
+    displayName: 'Box';
+    pluralName: 'boxes';
+    singularName: 'box';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    code: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::box.box'> &
+      Schema.Attribute.Private;
+    place: Schema.Attribute.Enumeration<
+      ['stock', 'packed', 'delivering', 'customer', 'returning', 'wash']
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    used: Schema.Attribute.Boolean;
   };
 }
 
@@ -523,6 +552,7 @@ export interface ApiCustomerCustomer extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     deliveryAddress: Schema.Attribute.Component<'office.address', false>;
+    invoiceStaticId: Schema.Attribute.Integer;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -569,6 +599,37 @@ export interface ApiGrowStrategyGrowStrategy
   };
 }
 
+export interface ApiMyBillingMyBilling extends Struct.SingleTypeSchema {
+  collectionName: 'my_billings';
+  info: {
+    description: '';
+    displayName: 'myBilling';
+    pluralName: 'my-billings';
+    singularName: 'my-billing';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    account: Schema.Attribute.String;
+    bankNum: Schema.Attribute.String;
+    billing: Schema.Attribute.Component<'office.billing', false>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::my-billing.my-billing'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
   collectionName: 'orders';
   info: {
@@ -593,6 +654,10 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::order.order'> &
       Schema.Attribute.Private;
     plantsToGrow: Schema.Attribute.Component<'grow.plant-batch', true>;
+    price_list: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::price-list.price-list'
+    >;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -629,6 +694,37 @@ export interface ApiPlantPlant extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiPriceListPriceList extends Struct.CollectionTypeSchema {
+  collectionName: 'price_lists';
+  info: {
+    description: '';
+    displayName: 'priceList';
+    pluralName: 'price-lists';
+    singularName: 'price-list';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    list: Schema.Attribute.Component<'office.plant-price', true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::price-list.price-list'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    orders: Schema.Attribute.Relation<'oneToMany', 'api::order.order'>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiTrayBatchTrayBatch extends Struct.CollectionTypeSchema {
   collectionName: 'tray_batches';
   info: {
@@ -642,7 +738,6 @@ export interface ApiTrayBatchTrayBatch extends Struct.CollectionTypeSchema {
   };
   attributes: {
     actions: Schema.Attribute.Relation<'manyToMany', 'api::action.action'>;
-    active: Schema.Attribute.Boolean;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -653,11 +748,36 @@ export interface ApiTrayBatchTrayBatch extends Struct.CollectionTypeSchema {
       'api::tray-batch.tray-batch'
     > &
       Schema.Attribute.Private;
-    placeCode: Schema.Attribute.String;
     plant: Schema.Attribute.Relation<'oneToOne', 'api::plant.plant'>;
     publishedAt: Schema.Attribute.DateTime;
     realGain: Schema.Attribute.Integer;
-    trayCode: Schema.Attribute.String;
+    trays: Schema.Attribute.Relation<'oneToMany', 'api::tray.tray'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiTrayTray extends Struct.CollectionTypeSchema {
+  collectionName: 'trays';
+  info: {
+    displayName: 'Tray';
+    pluralName: 'trays';
+    singularName: 'tray';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    code: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::tray.tray'> &
+      Schema.Attribute.Private;
+    placeCode: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1177,11 +1297,15 @@ declare module '@strapi/strapi' {
       'api::action.action': ApiActionAction;
       'api::batch.batch': ApiBatchBatch;
       'api::box-batch.box-batch': ApiBoxBatchBoxBatch;
+      'api::box.box': ApiBoxBox;
       'api::customer.customer': ApiCustomerCustomer;
       'api::grow-strategy.grow-strategy': ApiGrowStrategyGrowStrategy;
+      'api::my-billing.my-billing': ApiMyBillingMyBilling;
       'api::order.order': ApiOrderOrder;
       'api::plant.plant': ApiPlantPlant;
+      'api::price-list.price-list': ApiPriceListPriceList;
       'api::tray-batch.tray-batch': ApiTrayBatchTrayBatch;
+      'api::tray.tray': ApiTrayTray;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

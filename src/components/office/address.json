@@ -2,7 +2,8 @@
   "collectionName": "components_office_addresses",
   "info": {
     "displayName": "address",
-    "icon": "house"
+    "icon": "house",
+    "description": ""
   },
   "options": {},
   "attributes": {
@@ -13,6 +14,9 @@
       "type": "string"
     },
     "postCode": {
+      "type": "string"
+    },
+    "country": {
       "type": "string"
     }
   }

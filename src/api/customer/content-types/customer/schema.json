@@ -29,6 +29,9 @@
       "relation": "oneToMany",
       "target": "api::order.order",
       "mappedBy": "customer"
+    },
+    "invoiceStaticId": {
+      "type": "integer"
     }
   }
 }

@@ -38,6 +38,12 @@
       "relation": "oneToMany",
       "target": "api::batch.batch",
       "mappedBy": "order"
+    },
+    "price_list": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::price-list.price-list",
+      "inversedBy": "orders"
     }
   }
 }
