@@ -8,6 +8,6 @@ export default {
 
     "0 3 * * *": async ({ strapi }) => {
         console.log('start')
-        await generateBatch(strapi);
+        // await generateBatch();
     },
 };

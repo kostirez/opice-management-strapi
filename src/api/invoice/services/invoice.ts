@@ -115,7 +115,7 @@ function generatePersonalInfo(doc, customer, me) {
         .text(`${customer.billing.address.postCode}, ${customer.billing.address.city}`, 350, start + 55)
         .text(customer.billing.address.country, 350, start + 70)
         .text(`Ičo: ${customer.billing.ico}`, 350, start + 85)
-        .text(`Dič: ${customer.billing.dic}`, 350, start + 100)
+        .text(customer.billing.dic ? `Dič: ${customer.billing.dic}`: '', 350, start + 100)
         .moveDown();
 
 }
