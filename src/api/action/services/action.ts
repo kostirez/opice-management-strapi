@@ -41,14 +41,45 @@ export default factories.createCoreService('api::action.action', ({strapi}) => (
     },
 
 
-    fulfillAction: async (actionId: ID, timeInSeconds: number) => {
-        // Update the action status and timeSpent
-        const updatedAction = await strapi.entityService.update('api::action.action', actionId, {
-            data: {
-                state: 'done',
-                timeSpent: timeInSeconds
+    fulfillAction: async (actionId: ID, timeInSeconds: number, plantAmount?: number) => {
+
+        let data: any = {
+            state: 'done',
+            timeSpent: timeInSeconds,
+        };
+
+        if (plantAmount !== undefined) {
+            const action = await strapi.entityService.findOne(
+                'api::action.action',
+                actionId,
+                { populate: ['plantBatch'] }
+            );
+
+
+            data = {
+                 ...data,
+                plantBatch: {
+                    // @ts-ignore
+                    ...action.plantBatch,
+                    amount: plantAmount,
+                },
             }
+
+        }
+
+        const updatedAction = await strapi.entityService.update('api::action.action', actionId, {
+            data
         });
+        // Update the action status and timeSpent
+        // const updatedAction = await strapi.entityService.update('api::action.action', actionId, {
+        //     data: {
+        //         state: 'done',
+        //         timeSpent: timeInSeconds,
+        //         plantBatch: {
+        //             amount: plantAmount
+        //         }
+        //     }
+        // });
 
         // Get the batch associated with this action
         const action = await strapi.entityService.findOne('api::action.action', actionId, {

@@ -49,7 +49,7 @@ export default factories.createCoreController('api::action.action', ({ strapi })
       const {id} = ctx.params;
       const input = ctx.request.body;
     // const { timeInSeconds } = input;
-    return strapi.service('api::action.action').fulfillAction(id, input.timeInSeconds);
+    return strapi.service('api::action.action').fulfillAction(id, input.timeInSeconds, input.plantAmount ?? undefined);
   },
 
   generateOne: async (ctx) => {
