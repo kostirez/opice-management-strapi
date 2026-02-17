@@ -11,12 +11,6 @@
     "draftAndPublish": false
   },
   "attributes": {
-    "actions": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::action.action",
-      "inversedBy": "box_batches"
-    },
     "plant": {
       "type": "relation",
       "relation": "oneToOne",
@@ -37,6 +31,12 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::box.box"
+    },
+    "delivery": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::delivery.delivery",
+      "inversedBy": "box_batches"
     }
   }
 }

@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "deliveries",
+  "info": {
+    "singularName": "delivery",
+    "pluralName": "deliveries",
+    "displayName": "delivery"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "action": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::action.action",
+      "inversedBy": "delivery"
+    },
+    "box_batches": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::box-batch.box-batch",
+      "mappedBy": "delivery"
+    }
+  }
+}

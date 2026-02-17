@@ -16,6 +16,20 @@ export interface GrowActionTime extends Struct.ComponentSchema {
   };
 }
 
+export interface GrowDeliveredBox extends Struct.ComponentSchema {
+  collectionName: 'components_grow_delivered_boxes';
+  info: {
+    description: '';
+    displayName: 'DeliveredBox';
+    icon: 'archive';
+  };
+  attributes: {
+    boxType: Schema.Attribute.Enumeration<['IKEA']>;
+    count: Schema.Attribute.Integer;
+    weight: Schema.Attribute.Integer;
+  };
+}
+
 export interface GrowPlantBatch extends Struct.ComponentSchema {
   collectionName: 'components_grow_plant_batches';
   info: {
@@ -106,6 +120,7 @@ declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
       'grow.action-time': GrowActionTime;
+      'grow.delivered-box': GrowDeliveredBox;
       'grow.plant-batch': GrowPlantBatch;
       'office.address': OfficeAddress;
       'office.billing': OfficeBilling;

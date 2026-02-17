@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_grow_delivered_boxes",
+  "info": {
+    "displayName": "DeliveredBox",
+    "icon": "archive",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "count": {
+      "type": "integer"
+    },
+    "weight": {
+      "type": "integer"
+    },
+    "boxType": {
+      "type": "enumeration",
+      "enum": [
+        "IKEA"
+      ]
+    }
+  }
+}

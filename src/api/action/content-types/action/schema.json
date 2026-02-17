@@ -42,16 +42,16 @@
       "target": "api::tray-batch.tray-batch",
       "mappedBy": "actions"
     },
-    "box_batches": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::box-batch.box-batch",
-      "mappedBy": "actions"
-    },
     "action_type": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::action-type.action-type"
+    },
+    "delivery": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::delivery.delivery",
+      "mappedBy": "action"
     }
   }
 }
