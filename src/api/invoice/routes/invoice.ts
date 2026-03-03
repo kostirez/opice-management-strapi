@@ -8,5 +8,13 @@ export default {
                 auth: false, // Set to true if you want to secure it
             },
         },
+        {
+            method: 'POST',
+            path: '/invoice-aggregated/:customerId',
+            handler: 'invoice.generateAggregatedPdf',
+            config: {
+                auth: false,
+            },
+        },
     ],
 };

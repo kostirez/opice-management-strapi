@@ -1,6 +1,6 @@
 import { Context } from 'koa';
 import { parseISO, startOfMonth, endOfMonth } from 'date-fns';
-import { generateInvoicePdf } from '../services/invoice';
+import { generateInvoicePdf, generateAggregatedInvoicePdf } from '../services/invoice';
 
 export default {
     async generatePdf(ctx: Context) {
@@ -94,6 +94,97 @@ export default {
         // Set headers to trigger download
         ctx.set('Content-Type', 'application/pdf');
         ctx.set('Content-Disposition', `attachment; filename="invoice-${month}.pdf"`);
+        ctx.body = pdfBuffer;
+    },
+
+    async generateAggregatedPdf(ctx: Context) {
+        const { customerId } = ctx.params;
+        const { months } = ctx.request.body as any;
+
+        if (!customerId || !months || !Array.isArray(months) || months.length === 0) {
+            return ctx.badRequest('Missing customerId or months array');
+        }
+
+        const parsedMonths = months.map(m => parseISO(m));
+        const filters = parsedMonths.map(m => ({
+            timestamp: {
+                $gte: startOfMonth(m),
+                $lte: endOfMonth(m),
+            }
+        }));
+
+        // 🧾 Fetch delivery actions
+        const actions = await strapi.entityService.findMany('api::action.action', {
+            filters: {
+                state: 'done',
+                $or: filters,
+                action_type: {
+                    name: 'delivery',
+                },
+                batch: {
+                    order: {
+                        customer: {
+                            id: customerId,
+                        },
+                    },
+                },
+            },
+            populate: {
+                plantBatch: {
+                    populate: {
+                        plant: true
+                    }
+                },
+            },
+        });
+
+        const customer = await strapi.entityService.findMany('api::customer.customer', {
+            filters: {
+                id: customerId,
+            },
+            populate: {
+                billing: {
+                    populate: {
+                        address: true
+                    }
+                },
+                orders: {
+                    populate: {
+                        price_list: {
+                            populate: {
+                                list: {
+                                    populate: {
+                                        plant: true,
+                                    }
+                                }
+                            },
+                        }
+                    },
+                },
+            }
+        });
+
+        const me = await strapi.entityService.findMany('api::my-billing.my-billing', {
+            populate: {
+                billing: {
+                    populate: {
+                        address: true
+                    }
+                }
+            }
+        });
+
+        if (!actions || actions.length === 0) {
+            return ctx.notFound('No delivery actions found for this customer and months');
+        }
+
+        // Generate PDF buffer
+        // Use the first month for the invoice number generation logic or similar
+        const pdfBuffer = await generateAggregatedInvoicePdf(actions, customer[0], me, parsedMonths[0]);
+
+        // Set headers to trigger download
+        ctx.set('Content-Type', 'application/pdf');
+        ctx.set('Content-Disposition', `attachment; filename="invoice-aggregated.pdf"`);
         ctx.body = pdfBuffer;
     }
 };

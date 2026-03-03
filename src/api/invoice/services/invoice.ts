@@ -11,6 +11,12 @@ type LineItem = {
     dateTotal: number;
 };
 
+type MonthGroup = {
+    month: string;
+    items: { name: string; quantity: number; pricePer100: number, total: number }[];
+    monthTotal: number;
+};
+
 function groupActionsByDate(actions, priceList: any): LineItem[] {
     const grouped = new Map<string, LineItem>();
 
@@ -39,6 +45,63 @@ function groupActionsByDate(actions, priceList: any): LineItem[] {
     }
 
     return Array.from(grouped.values());
+}
+
+function groupActionsByMonthAndPlant(actions, priceList: any): MonthGroup[] {
+    const groupedByMonth = new Map<string, MonthGroup>();
+
+    for (const action of actions) {
+        const date = new Date(action.timestamp);
+        const monthKey = format(date, 'yyyy-MM');
+        const productName = action.plantBatch.plant.name;
+        const quantity = action.plantBatch.amount || 1;
+        const listIndex = priceList.list.findIndex(p => p.plant.id == action.plantBatch.plant.id)
+        const pricePer100 = listIndex >= 0 ? priceList.list[listIndex].price : 0;
+
+        if (!groupedByMonth.has(monthKey)) {
+            groupedByMonth.set(monthKey, { month: monthKey, items: [], monthTotal: 0 });
+        }
+
+        const group = groupedByMonth.get(monthKey)!;
+        const existingItem = group.items.find(i => i.name === productName);
+
+        if (existingItem) {
+            existingItem.quantity += quantity;
+            existingItem.total += pricePer100 * quantity / 100;
+        } else {
+            group.items.push({ name: productName, quantity, pricePer100, total: pricePer100 * quantity / 100 });
+        }
+
+        group.monthTotal += pricePer100 * quantity / 100;
+    }
+
+    return Array.from(groupedByMonth.values()).sort((a, b) => a.month.localeCompare(b.month));
+}
+
+export async function generateAggregatedInvoicePdf(actions: any[], customer: any, me: any, startDate: Date) {
+    const doc = new PDFDocument({ size: "A4", margin: 50 });
+
+    doc.registerFont('regular', 'fonts/Podkova-Regular.ttf')
+    doc.registerFont('bold', 'fonts/Podkova-Bold.ttf')
+
+    const chunks: Buffer[] = [];
+
+    const invoiceNum = getInvoiceNum(startDate, customer);
+    const priceList = customer.orders[0].price_list;
+    const grouped = groupActionsByMonthAndPlant(actions, priceList);
+    const totalSum = grouped.reduce((acc, g) => acc + g.monthTotal, 0);
+
+    generateHeader(doc, invoiceNum);
+    generatePersonalInfo(doc, customer, me);
+    await generatePaymentDetail(doc, 250, me.billing.account || me.account, invoiceNum, me.billing.bankNum || me.bankNum, totalSum)
+    await generateAggregatedInvoiceTable(doc, totalSum, grouped)
+    doc.end();
+
+    return new Promise<Buffer>((resolve, reject) => {
+        doc.on('data', chunk => chunks.push(chunk));
+        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('error', reject);
+    });
 }
 
 
@@ -232,6 +295,41 @@ const generateInvoiceTable = (doc, totalPrice, groupedActions: any[]) => {
                 deliveryDate = '';
             }
             generateTableRow(doc, actualRow, [deliveryDate, item.name, item.quantity + 'g', formatCurrency(item.pricePer100), formatCurrency(item.total)] );
+            actualRow = actualRow + 10;
+        });
+        actualRow += 2;
+        generateHr(doc, actualRow, 1);
+    });
+    generateHr(doc, actualRow, 2);
+    actualRow += 20;
+    doc
+        .fontSize(15)
+        .font('bold')
+        .text('Celkem k úhradě:', 200, actualRow, { width: 250, align: "right" })
+        .text(formatCurrency(totalPrice), 250, actualRow, { align: "right" });
+}
+
+const generateAggregatedInvoiceTable = (doc, totalPrice, monthGroups: MonthGroup[]) => {
+
+    let actualRow = 370;
+
+    generateTableRow(
+        doc,
+        actualRow,
+        ["Měsíc", "Druh", "Váha", "Cena za 100g", "Součet"]
+    );
+    actualRow += 15;
+    generateHr(doc, actualRow, 3);
+    actualRow += 2;
+    monthGroups.forEach((group, index) => {
+        let monthName = format(new Date(group.month + '-01'), 'MM/yyyy')
+        actualRow += 2;
+        group.items.forEach((item, index) => {
+
+            if (index > 0) {
+                monthName = '';
+            }
+            generateTableRow(doc, actualRow, [monthName, item.name, item.quantity + 'g', formatCurrency(item.pricePer100), formatCurrency(item.total)]);
             actualRow = actualRow + 10;
         });
         actualRow += 2;
