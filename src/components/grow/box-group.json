@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_grow_box_groups",
+  "info": {
+    "displayName": "boxGroup",
+    "icon": "gift"
+  },
+  "options": {},
+  "attributes": {
+    "box": {
+      "type": "enumeration",
+      "enum": [
+        "BOX_S",
+        "BOX_M",
+        "BOX_L"
+      ]
+    },
+    "amount": {
+      "type": "integer"
+    }
+  }
+}

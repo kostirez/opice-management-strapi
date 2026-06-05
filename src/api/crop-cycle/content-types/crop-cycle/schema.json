@@ -1,0 +1,49 @@
+{
+  "kind": "collectionType",
+  "collectionName": "crop_cycles",
+  "info": {
+    "singularName": "crop-cycle",
+    "pluralName": "crop-cycles",
+    "displayName": "CropCycle",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "seedingDay": {
+      "type": "date"
+    },
+    "moveToLightDay": {
+      "type": "date"
+    },
+    "harvestDay": {
+      "type": "date"
+    },
+    "plant": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::plant.plant"
+    },
+    "state": {
+      "type": "enumeration",
+      "enum": [
+        "PENDING",
+        "GERMINATION",
+        "LIGHT",
+        "HARVESTED"
+      ]
+    },
+    "crop_cycle_harvest": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::crop-cycle-harvest.crop-cycle-harvest",
+      "mappedBy": "crop_cycle"
+    },
+    "tray": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::tray.tray"
+    }
+  }
+}

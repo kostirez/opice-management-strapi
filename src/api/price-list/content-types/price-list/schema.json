@@ -24,6 +24,16 @@
       "relation": "oneToMany",
       "target": "api::order.order",
       "mappedBy": "price_list"
+    },
+    "boxList": {
+      "type": "component",
+      "repeatable": true,
+      "component": "office.box-price"
+    },
+    "recipeList": {
+      "type": "component",
+      "repeatable": true,
+      "component": "office.recipe-price"
     }
   }
 }

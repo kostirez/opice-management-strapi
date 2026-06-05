@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_grow_recipe_batches",
+  "info": {
+    "displayName": "RecipeBatch",
+    "icon": "database"
+  },
+  "options": {},
+  "attributes": {
+    "recipe": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::recipe.recipe"
+    },
+    "amount": {
+      "type": "integer"
+    },
+    "unit": {
+      "type": "enumeration",
+      "enum": [
+        "GRAM",
+        "BOX_S",
+        "BOX_M",
+        "BOX_L"
+      ]
+    }
+  }
+}

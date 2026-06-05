@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "occupancies",
+  "info": {
+    "singularName": "occupancy",
+    "pluralName": "occupancies",
+    "displayName": "occupancy",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "dayInWeek": {
+      "type": "enumeration",
+      "enum": [
+        "MON",
+        "TUE",
+        "WED",
+        "THU",
+        "FRI",
+        "SAT",
+        "SUN"
+      ]
+    },
+    "germinationCount": {
+      "type": "integer"
+    },
+    "onLightCount": {
+      "type": "integer"
+    },
+    "active": {
+      "type": "boolean"
+    },
+    "deactivatedAt": {
+      "type": "date"
+    },
+    "operation_plan": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::operation-plan.operation-plan",
+      "inversedBy": "occupancies"
+    }
+  }
+}

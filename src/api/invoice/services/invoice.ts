@@ -7,13 +7,13 @@ const path = require('path');
 
 type LineItem = {
     date: string;
-    items: { name: string; quantity: number; pricePer100: number, total: number  }[];
+    items: { name: string; quantity: number; pricePer100: number, total: number, unit: string  }[];
     dateTotal: number;
 };
 
 type MonthGroup = {
     month: string;
-    items: { name: string; quantity: number; pricePer100: number, total: number }[];
+    items: { name: string; quantity: number; pricePer100: number, total: number, unit: string }[];
     monthTotal: number;
 };
 
@@ -22,29 +22,99 @@ function groupActionsByDate(actions, priceList: any): LineItem[] {
 
     for (const action of actions) {
         const date = format(new Date(action.timestamp), 'yyyy-MM-dd');
-        const productName = action.plantBatch.plant.name; // from action_type or other field
-        const quantity = action.plantBatch.amount || 1;
-        const listIndex = priceList.list.findIndex(p => p.plant.id == action.plantBatch.plant.id)
-        const pricePer100 = listIndex>=0 ? priceList.list[listIndex].price : 0;
+        let productName = action.plantBatch?.plant?.name || '';
+        const quantity = action.plantBatch?.amount || 1;
+        let pricePer100 = 0;
+        let unitMultiplier = 1 / 100;
+
+        if (action.recipe) {
+            productName = action.recipe.name;
+            const recipePriceEntry = priceList.recipeList?.find(p => 
+                p.recipe?.id == action.recipe.id && 
+                (p.unit === action.unit || (!p.unit && (action.unit === 'GRAM' || !action.unit)))
+            );
+            pricePer100 = recipePriceEntry ? recipePriceEntry.price : 0;
+            if (action.unit && action.unit.startsWith('BOX_')) {
+                unitMultiplier = 1;
+            }
+        } else if (action.plantBatch?.plant) {
+            const listIndex = priceList.list.findIndex(p => p.plant.id == action.plantBatch.plant.id);
+            pricePer100 = listIndex >= 0 ? priceList.list[listIndex].price : 0;
+        }
 
         if (!grouped.has(date)) {
             grouped.set(date, { date, items: [], dateTotal: 0 });
         }
 
         const group = grouped.get(date)!;
-        const existingItem = group.items.find(i => i.name === productName);
+        const itemUnit = (action.unit && action.unit.startsWith('BOX_')) ? 'ks' : 'g';
+        const existingItem = group.items.find(i => i.name === productName && i.unit === itemUnit);
+        const itemTotal = pricePer100 * quantity * unitMultiplier;
 
         if (existingItem) {
             existingItem.quantity += quantity;
-            existingItem.total += pricePer100 * quantity / 100;
+            existingItem.total += itemTotal;
         } else {
-            group.items.push({ name: productName, quantity, pricePer100, total: pricePer100 * quantity / 100 });
+            group.items.push({ name: productName, quantity, pricePer100, total: itemTotal, unit: itemUnit });
         }
 
-        group.dateTotal += pricePer100 * quantity / 100;
+        group.dateTotal += itemTotal;
     }
 
     return Array.from(grouped.values());
+}
+
+function groupDeliveriesByDate(deliveries: any[], priceList: any): LineItem[] {
+    const grouped = new Map<string, LineItem>();
+
+    for (const delivery of deliveries) {
+        const date = format(new Date(delivery.deliveredAt || delivery.createdAt), 'yyyy-MM-dd');
+
+        if (!grouped.has(date)) {
+            grouped.set(date, { date, items: [], dateTotal: 0 });
+        }
+        const group = grouped.get(date)!;
+
+        for (const item of delivery.deliveredItems || []) {
+            let productName = item.recipe?.name || '';
+            const quantity = item.amount || 0;
+            let pricePer100 = 0;
+            let unitMultiplier = 1 / 100; // Default for GRAM (price per 100g)
+
+            if (item.recipe) {
+                productName = item.recipe.name;
+                const recipePriceEntry = priceList.recipeList?.find(p => 
+                    p.recipe?.id == item.recipe.id && 
+                    (p.unit === item.unit || (!p.unit && (item.unit === 'GRAM' || !item.unit)))
+                );
+                pricePer100 = recipePriceEntry ? recipePriceEntry.price : 0;
+                
+                // If unit is BOX_*, the price is per piece (ks), not per 100g
+                if (item.unit && item.unit.startsWith('BOX_')) {
+                    unitMultiplier = 1;
+                }
+            }
+            // else if (item.plant) {
+            //     const listIndex = priceList.list.findIndex(p => p.plant.id == item.plant.id);
+            //     pricePer100 = listIndex >= 0 ? priceList.list[listIndex].price : 0;
+            // }
+
+            const itemUnit = (item.unit && item.unit.startsWith('BOX_')) ? 'ks' : 'g';
+            const existingItem = group.items.find(i => i.name === productName && i.unit === itemUnit);
+            const itemTotal = pricePer100 * quantity * unitMultiplier;
+
+            if (existingItem) {
+                existingItem.quantity += quantity;
+                existingItem.total += itemTotal;
+            } else {
+                group.items.push({ name: productName, quantity, pricePer100, total: itemTotal, unit: itemUnit });
+            }
+
+            group.dateTotal += itemTotal;
+        }
+    }
+
+    return Array.from(grouped.values()).sort((a, b) => a.date.localeCompare(b.date));
 }
 
 function groupActionsByMonthAndPlant(actions, priceList: any): MonthGroup[] {
@@ -53,29 +123,117 @@ function groupActionsByMonthAndPlant(actions, priceList: any): MonthGroup[] {
     for (const action of actions) {
         const date = new Date(action.timestamp);
         const monthKey = format(date, 'yyyy-MM');
-        const productName = action.plantBatch.plant.name;
-        const quantity = action.plantBatch.amount || 1;
-        const listIndex = priceList.list.findIndex(p => p.plant.id == action.plantBatch.plant.id)
-        const pricePer100 = listIndex >= 0 ? priceList.list[listIndex].price : 0;
+        let productName = action.plantBatch?.plant?.name || '';
+        const quantity = action.plantBatch?.amount || 1;
+        let pricePer100 = 0;
+        let unitMultiplier = 1 / 100;
+
+        if (action.recipe) {
+            productName = action.recipe.name;
+            const recipePriceEntry = priceList.recipeList?.find(p => 
+                p.recipe?.id == action.recipe.id && 
+                (p.unit === action.unit || (!p.unit && (action.unit === 'GRAM' || !action.unit)))
+            );
+            pricePer100 = recipePriceEntry ? recipePriceEntry.price : 0;
+            if (action.unit && action.unit.startsWith('BOX_')) {
+                unitMultiplier = 1;
+            }
+        } else if (action.plantBatch?.plant) {
+            const listIndex = priceList.list.findIndex(p => p.plant.id == action.plantBatch.plant.id);
+            pricePer100 = listIndex >= 0 ? priceList.list[listIndex].price : 0;
+        }
 
         if (!groupedByMonth.has(monthKey)) {
             groupedByMonth.set(monthKey, { month: monthKey, items: [], monthTotal: 0 });
         }
 
         const group = groupedByMonth.get(monthKey)!;
-        const existingItem = group.items.find(i => i.name === productName);
+        const itemUnit = (action.unit && action.unit.startsWith('BOX_')) ? 'ks' : 'g';
+        const existingItem = group.items.find(i => i.name === productName && i.unit === itemUnit);
+        const itemTotal = pricePer100 * quantity * unitMultiplier;
 
         if (existingItem) {
             existingItem.quantity += quantity;
-            existingItem.total += pricePer100 * quantity / 100;
+            existingItem.total += itemTotal;
         } else {
-            group.items.push({ name: productName, quantity, pricePer100, total: pricePer100 * quantity / 100 });
+            group.items.push({ name: productName, quantity, pricePer100, total: itemTotal, unit: itemUnit });
         }
 
-        group.monthTotal += pricePer100 * quantity / 100;
+        group.monthTotal += itemTotal;
     }
 
     return Array.from(groupedByMonth.values()).sort((a, b) => a.month.localeCompare(b.month));
+}
+
+function groupBoxBatchesByDate(batches, priceList: any): LineItem[] {
+    const grouped = new Map<string, LineItem>();
+
+    for (const batch of batches) {
+        for (const delivery of batch.deliveries) {
+            const date = format(new Date(batch.dueToDate), 'yyyy-MM-dd');
+            
+            if (!grouped.has(date)) {
+                grouped.set(date, { date, items: [], dateTotal: 0 });
+            }
+            const group = grouped.get(date)!;
+
+            for (const boxBatch of delivery.box_batches) {
+                const productName = boxBatch.plant.name + " (box S)";
+                const quantity = boxBatch.amount || 0;
+                
+                // look up size S and apply the price
+                const boxPriceEntry = priceList.boxList.find(bp => 
+                    bp.plant.id == boxBatch.plant.id && bp.size === 'S'
+                );
+                const pricePerBox = boxPriceEntry ? boxPriceEntry.price : 0;
+
+                const existingItem = group.items.find(i => i.name === productName && i.unit === 'ks');
+                if (existingItem) {
+                    existingItem.quantity += quantity;
+                    existingItem.total += pricePerBox * quantity;
+                } else {
+                    group.items.push({ 
+                        name: productName, 
+                        quantity, 
+                        pricePer100: pricePerBox,
+                        total: pricePerBox * quantity,
+                        unit: 'ks'
+                    });
+                }
+                group.dateTotal += pricePerBox * quantity;
+            }
+        }
+    }
+
+    return Array.from(grouped.values()).sort((a, b) => a.date.localeCompare(b.date));
+}
+
+export async function generateBoxInvoicePdf(batches: any[], customer: any, me: any, startDate: Date) {
+    const doc = new PDFDocument({ size: "A4", margin: 50 });
+
+    doc.registerFont('regular', 'fonts/Podkova-Regular.ttf')
+    doc.registerFont('bold', 'fonts/Podkova-Bold.ttf')
+
+    const chunks: Buffer[] = [];
+
+    const invoiceNum = getInvoiceNum(startDate, customer);
+    console.log('customer.orders[0]:',customer.orders[0]);
+    console.log('customer',customer);
+    const priceList = customer.orders[0].price_list;
+    const grouped = groupBoxBatchesByDate(batches, priceList);
+    const totalSum = grouped.reduce((acc, g) => acc + g.dateTotal, 0);
+
+    generateHeader(doc, invoiceNum);
+    generatePersonalInfo(doc, customer, me);
+    await generatePaymentDetail(doc, 250, me.billing.account || me.account, invoiceNum, me.billing.bankNum || me.bankNum, totalSum)
+    generateInvoiceTable(doc, totalSum, grouped);
+    doc.end();
+
+    return new Promise<Buffer>((resolve, reject) => {
+        doc.on('data', chunk => chunks.push(chunk));
+        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('error', reject);
+    });
 }
 
 export async function generateAggregatedInvoicePdf(actions: any[], customer: any, me: any, startDate: Date) {
@@ -127,6 +285,35 @@ export async function generateInvoicePdf(actions: any[], customer: any, me: any,
     generateHeader(doc, invoiceNum);
     generatePersonalInfo(doc, customer, me);
     await generatePaymentDetail(doc, 250,  me.account, invoiceNum, me.bankNum, totalSum)
+    await generateInvoiceTable(doc, totalSum, grouped)
+
+    doc.end();
+
+    return new Promise<Buffer>((resolve, reject) => {
+        doc.on('data', chunk => chunks.push(chunk));
+        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('error', reject);
+    });
+}
+
+export async function generateBatchDeliveryInvoicePdf(deliveries: any[], customer: any, me: any, startDate: Date) {
+    const doc = new PDFDocument({ size: "A4", margin: 50 });
+
+    doc.registerFont('regular', 'fonts/Podkova-Regular.ttf')
+    doc.registerFont('bold', 'fonts/Podkova-Bold.ttf')
+
+    const chunks: Buffer[] = [];
+
+    const invoiceNum = getInvoiceNum(startDate, customer);
+
+    // Group deliveries by delivery date
+    const priceList = customer.orders[0].price_list;
+    const grouped = groupDeliveriesByDate(deliveries, priceList);
+    const totalSum = grouped.reduce((acc, g) => acc + g.dateTotal, 0);
+
+    generateHeader(doc, invoiceNum);
+    generatePersonalInfo(doc, customer, me);
+    await generatePaymentDetail(doc, 250, me.billing.account || me.account, invoiceNum, me.billing.bankNum || me.bankNum, totalSum)
     await generateInvoiceTable(doc, totalSum, grouped)
 
     doc.end();
@@ -281,7 +468,7 @@ const generateInvoiceTable = (doc, totalPrice, groupedActions: any[]) => {
     generateTableRow(
         doc,
         actualRow,
-        ["Doručení", "Druh", "Váha", "Cena za 100g", "Součet"]
+        ["Doručení", "Druh", "Množství", "Cena za j.", "Součet"]
     );
     actualRow += 15;
     generateHr(doc, actualRow, 3);
@@ -294,7 +481,8 @@ const generateInvoiceTable = (doc, totalPrice, groupedActions: any[]) => {
             if(index>0) {
                 deliveryDate = '';
             }
-            generateTableRow(doc, actualRow, [deliveryDate, item.name, item.quantity + 'g', formatCurrency(item.pricePer100), formatCurrency(item.total)] );
+            const priceLabel = item.unit === 'g' ? ' /100g' : ' /ks';
+            generateTableRow(doc, actualRow, [deliveryDate, item.name, item.quantity + " " + item.unit, formatCurrency(item.pricePer100) + priceLabel, formatCurrency(item.total)] );
             actualRow = actualRow + 10;
         });
         actualRow += 2;
@@ -316,8 +504,9 @@ const generateAggregatedInvoiceTable = (doc, totalPrice, monthGroups: MonthGroup
     generateTableRow(
         doc,
         actualRow,
-        ["Měsíc", "Druh", "Váha", "Cena za 100g", "Součet"]
+        ["Měsíc", "Druh", "Množství", "Cena za j.", "Součet"]
     );
+
     actualRow += 15;
     generateHr(doc, actualRow, 3);
     actualRow += 2;
@@ -329,7 +518,8 @@ const generateAggregatedInvoiceTable = (doc, totalPrice, monthGroups: MonthGroup
             if (index > 0) {
                 monthName = '';
             }
-            generateTableRow(doc, actualRow, [monthName, item.name, item.quantity + 'g', formatCurrency(item.pricePer100), formatCurrency(item.total)]);
+            const priceLabel = item.unit === 'g' ? ' /100g' : ' /ks';
+            generateTableRow(doc, actualRow, [monthName, item.name, item.quantity + " " + item.unit, formatCurrency(item.pricePer100) + priceLabel, formatCurrency(item.total)]);
             actualRow = actualRow + 10;
         });
         actualRow += 2;

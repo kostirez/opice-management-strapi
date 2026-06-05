@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_grow_crop_batches",
+  "info": {
+    "displayName": "CropBatch",
+    "icon": "seed"
+  },
+  "options": {},
+  "attributes": {
+    "plant": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::plant.plant"
+    },
+    "amount": {
+      "type": "integer"
+    },
+    "unit": {
+      "type": "enumeration",
+      "enum": [
+        "GRAM",
+        "BOX_S",
+        "BOX_M",
+        "BOX_L"
+      ],
+      "default": "GRAM"
+    }
+  }
+}

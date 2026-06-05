@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "operation_plans",
+  "info": {
+    "singularName": "operation-plan",
+    "pluralName": "operation-plans",
+    "displayName": "OperationPlan"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "active": {
+      "type": "boolean"
+    },
+    "deactivatedAt": {
+      "type": "date"
+    },
+    "day_actions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::day-action.day-action",
+      "mappedBy": "operation_plan"
+    },
+    "day_yields": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::day-yield.day-yield",
+      "mappedBy": "operation_plan"
+    },
+    "occupancies": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::occupancy.occupancy",
+      "mappedBy": "operation_plan"
+    },
+    "note": {
+      "type": "string"
+    }
+  }
+}

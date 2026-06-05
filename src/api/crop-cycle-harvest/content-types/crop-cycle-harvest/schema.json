@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "crop_cycle_harvests",
+  "info": {
+    "singularName": "crop-cycle-harvest",
+    "pluralName": "crop-cycle-harvests",
+    "displayName": "CropCycleHarvest",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "crop_cycle": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::crop-cycle.crop-cycle",
+      "inversedBy": "crop_cycle_harvest"
+    },
+    "weight": {
+      "type": "integer"
+    },
+    "performedAt": {
+      "type": "datetime"
+    },
+    "batch_harvest": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::batch-harvest.batch-harvest",
+      "inversedBy": "crop_cycle_harvests"
+    }
+  }
+}

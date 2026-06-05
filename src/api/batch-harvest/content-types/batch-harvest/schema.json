@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "batch_harvests",
+  "info": {
+    "singularName": "batch-harvest",
+    "pluralName": "batch-harvests",
+    "displayName": "BatchHarvest",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "date": {
+      "type": "date"
+    },
+    "crop_cycle_harvests": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::crop-cycle-harvest.crop-cycle-harvest",
+      "mappedBy": "batch_harvest"
+    },
+    "harvestedCrops": {
+      "type": "component",
+      "repeatable": true,
+      "component": "grow.crop-batch"
+    },
+    "usedHarvest": {
+      "type": "component",
+      "repeatable": true,
+      "component": "grow.crop-batch"
+    },
+    "batch_deliveries": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::batch-delivery.batch-delivery",
+      "mappedBy": "batch_harvest"
+    }
+  }
+}

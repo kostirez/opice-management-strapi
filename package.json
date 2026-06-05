@@ -9,7 +9,7 @@
     "develop": "strapi develop",
     "start": "strapi start",
     "strapi": "strapi",
-    "docker-start": "sudo docker-compose up"
+    "docker-start": "docker-compose up"
   },
   "dependencies": {
     "@strapi/plugin-cloud": "5.10.3",

@@ -1,0 +1,26 @@
+{
+  "kind": "singleType",
+  "collectionName": "inventories",
+  "info": {
+    "singularName": "inventory",
+    "pluralName": "inventories",
+    "displayName": "inventory"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "boxesSInDepot": {
+      "type": "integer"
+    },
+    "boxesSOnWay": {
+      "type": "integer"
+    },
+    "boxesSAtCustomer": {
+      "type": "integer"
+    },
+    "brokenBoxesS": {
+      "type": "integer"
+    }
+  }
+}

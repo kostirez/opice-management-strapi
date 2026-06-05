@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_office_recipe_prices",
+  "info": {
+    "displayName": "RecipePrice",
+    "icon": "chartPie"
+  },
+  "options": {},
+  "attributes": {
+    "recipe": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::recipe.recipe"
+    },
+    "unit": {
+      "type": "enumeration",
+      "enum": [
+        "GRAM",
+        "BOX_S",
+        "BOX_M",
+        "BOX_L"
+      ]
+    },
+    "price": {
+      "type": "integer"
+    }
+  }
+}

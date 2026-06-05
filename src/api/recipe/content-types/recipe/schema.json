@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "recipes",
+  "info": {
+    "singularName": "recipe",
+    "pluralName": "recipes",
+    "displayName": "Recipe",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "code": {
+      "type": "string"
+    },
+    "totalGrowTime": {
+      "type": "integer"
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "grow.recipe-item"
+    }
+  }
+}

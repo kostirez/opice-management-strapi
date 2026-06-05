@@ -16,6 +16,32 @@ export interface GrowActionTime extends Struct.ComponentSchema {
   };
 }
 
+export interface GrowBoxGroup extends Struct.ComponentSchema {
+  collectionName: 'components_grow_box_groups';
+  info: {
+    displayName: 'boxGroup';
+    icon: 'gift';
+  };
+  attributes: {
+    amount: Schema.Attribute.Integer;
+    box: Schema.Attribute.Enumeration<['BOX_S', 'BOX_M', 'BOX_L']>;
+  };
+}
+
+export interface GrowCropBatch extends Struct.ComponentSchema {
+  collectionName: 'components_grow_crop_batches';
+  info: {
+    displayName: 'CropBatch';
+    icon: 'seed';
+  };
+  attributes: {
+    amount: Schema.Attribute.Integer;
+    plant: Schema.Attribute.Relation<'oneToOne', 'api::plant.plant'>;
+    unit: Schema.Attribute.Enumeration<['GRAM', 'BOX_S', 'BOX_M', 'BOX_L']> &
+      Schema.Attribute.DefaultTo<'GRAM'>;
+  };
+}
+
 export interface GrowDeliveredBox extends Struct.ComponentSchema {
   collectionName: 'components_grow_delivered_boxes';
   info: {
@@ -43,6 +69,31 @@ export interface GrowPlantBatch extends Struct.ComponentSchema {
       'oneToOne',
       'api::grow-strategy.grow-strategy'
     >;
+    plant: Schema.Attribute.Relation<'oneToOne', 'api::plant.plant'>;
+  };
+}
+
+export interface GrowRecipeBatch extends Struct.ComponentSchema {
+  collectionName: 'components_grow_recipe_batches';
+  info: {
+    displayName: 'RecipeBatch';
+    icon: 'database';
+  };
+  attributes: {
+    amount: Schema.Attribute.Integer;
+    recipe: Schema.Attribute.Relation<'oneToOne', 'api::recipe.recipe'>;
+    unit: Schema.Attribute.Enumeration<['GRAM', 'BOX_S', 'BOX_M', 'BOX_L']>;
+  };
+}
+
+export interface GrowRecipeItem extends Struct.ComponentSchema {
+  collectionName: 'components_grow_recipe_items';
+  info: {
+    displayName: 'RecipeItem';
+    icon: 'chartBubble';
+  };
+  attributes: {
+    percent: Schema.Attribute.Integer;
     plant: Schema.Attribute.Relation<'oneToOne', 'api::plant.plant'>;
   };
 }
@@ -77,6 +128,19 @@ export interface OfficeBilling extends Struct.ComponentSchema {
   };
 }
 
+export interface OfficeBoxPrice extends Struct.ComponentSchema {
+  collectionName: 'components_office_box_prices';
+  info: {
+    displayName: 'BoxPrice';
+    icon: 'shoppingCart';
+  };
+  attributes: {
+    plant: Schema.Attribute.Relation<'oneToOne', 'api::plant.plant'>;
+    price: Schema.Attribute.Integer;
+    size: Schema.Attribute.Enumeration<['S', 'M', 'L', 'XL']>;
+  };
+}
+
 export interface OfficePlantPrice extends Struct.ComponentSchema {
   collectionName: 'components_office_plant_prices';
   info: {
@@ -86,6 +150,19 @@ export interface OfficePlantPrice extends Struct.ComponentSchema {
   attributes: {
     plant: Schema.Attribute.Relation<'oneToOne', 'api::plant.plant'>;
     price: Schema.Attribute.Integer;
+  };
+}
+
+export interface OfficeRecipePrice extends Struct.ComponentSchema {
+  collectionName: 'components_office_recipe_prices';
+  info: {
+    displayName: 'RecipePrice';
+    icon: 'chartPie';
+  };
+  attributes: {
+    price: Schema.Attribute.Integer;
+    recipe: Schema.Attribute.Relation<'oneToOne', 'api::recipe.recipe'>;
+    unit: Schema.Attribute.Enumeration<['GRAM', 'BOX_S', 'BOX_M', 'BOX_L']>;
   };
 }
 
@@ -120,11 +197,17 @@ declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
       'grow.action-time': GrowActionTime;
+      'grow.box-group': GrowBoxGroup;
+      'grow.crop-batch': GrowCropBatch;
       'grow.delivered-box': GrowDeliveredBox;
       'grow.plant-batch': GrowPlantBatch;
+      'grow.recipe-batch': GrowRecipeBatch;
+      'grow.recipe-item': GrowRecipeItem;
       'office.address': OfficeAddress;
       'office.billing': OfficeBilling;
+      'office.box-price': OfficeBoxPrice;
       'office.plant-price': OfficePlantPrice;
+      'office.recipe-price': OfficeRecipePrice;
       'time.calendar-rule': TimeCalendarRule;
       'time.days-in-week': TimeDaysInWeek;
     }

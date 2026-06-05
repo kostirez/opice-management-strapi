@@ -38,6 +38,12 @@
       "relation": "oneToMany",
       "target": "api::action.action",
       "mappedBy": "batch"
+    },
+    "deliveries": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::delivery.delivery",
+      "mappedBy": "batch"
     }
   }
 }

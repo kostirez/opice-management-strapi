@@ -1,0 +1,60 @@
+{
+  "kind": "collectionType",
+  "collectionName": "day_actions",
+  "info": {
+    "singularName": "day-action",
+    "pluralName": "day-actions",
+    "displayName": "DayAction",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "DayInWeek": {
+      "type": "enumeration",
+      "enum": [
+        "MON",
+        "TUE",
+        "WED",
+        "THU",
+        "FRI",
+        "SAT",
+        "SUN"
+      ]
+    },
+    "order": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::order.order"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "SEEDING",
+        "MOVE_TO_LIGHT",
+        "HARVEST"
+      ]
+    },
+    "plant": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::plant.plant"
+    },
+    "trayCount": {
+      "type": "integer"
+    },
+    "deactivatedAt": {
+      "type": "date"
+    },
+    "active": {
+      "type": "boolean"
+    },
+    "operation_plan": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::operation-plan.operation-plan",
+      "inversedBy": "day_actions"
+    }
+  }
+}

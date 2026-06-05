@@ -1,0 +1,47 @@
+{
+  "kind": "collectionType",
+  "collectionName": "day_yields",
+  "info": {
+    "singularName": "day-yield",
+    "pluralName": "day-yields",
+    "displayName": "DayYield",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "dayInWeek": {
+      "type": "enumeration",
+      "enum": [
+        "MON",
+        "TUE",
+        "WED",
+        "THU",
+        "FRI",
+        "SAT",
+        "SUN"
+      ]
+    },
+    "plant": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::plant.plant"
+    },
+    "weight": {
+      "type": "integer"
+    },
+    "active": {
+      "type": "boolean"
+    },
+    "deactivatedAt": {
+      "type": "date"
+    },
+    "operation_plan": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::operation-plan.operation-plan",
+      "inversedBy": "day_yields"
+    }
+  }
+}

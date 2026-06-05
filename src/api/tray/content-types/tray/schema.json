@@ -4,17 +4,31 @@
   "info": {
     "singularName": "tray",
     "pluralName": "trays",
-    "displayName": "Tray"
+    "displayName": "Tray",
+    "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "attributes": {
     "code": {
-      "type": "string"
+      "type": "string",
+      "unique": true
     },
     "placeCode": {
       "type": "string"
+    },
+    "state": {
+      "type": "enumeration",
+      "enum": [
+        "Empty",
+        "InUse",
+        "Washing",
+        "Damaged"
+      ]
+    },
+    "totalCycle": {
+      "type": "integer"
     }
   }
 }

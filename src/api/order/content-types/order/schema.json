@@ -44,6 +44,22 @@
       "relation": "manyToOne",
       "target": "api::price-list.price-list",
       "inversedBy": "orders"
+    },
+    "batch_deliveries": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::batch-delivery.batch-delivery",
+      "mappedBy": "order"
+    },
+    "cropsToGrow": {
+      "type": "component",
+      "repeatable": true,
+      "component": "grow.crop-batch"
+    },
+    "itemsForDelivery": {
+      "type": "component",
+      "repeatable": true,
+      "component": "grow.recipe-batch"
     }
   }
 }

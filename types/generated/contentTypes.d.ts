@@ -418,7 +418,6 @@ export interface ApiActionAction extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    delivery: Schema.Attribute.Relation<'oneToOne', 'api::delivery.delivery'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -440,6 +439,88 @@ export interface ApiActionAction extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiBatchDeliveryBatchDelivery
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'batch_deliveries';
+  info: {
+    description: '';
+    displayName: 'BatchDelivery';
+    pluralName: 'batch-deliveries';
+    singularName: 'batch-delivery';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    batch_harvest: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::batch-harvest.batch-harvest'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    deliveredAt: Schema.Attribute.DateTime;
+    deliveredItems: Schema.Attribute.Component<'grow.recipe-batch', true>;
+    expectedItems: Schema.Attribute.Component<'grow.recipe-batch', true>;
+    handedBoxes: Schema.Attribute.Component<'grow.box-group', true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::batch-delivery.batch-delivery'
+    > &
+      Schema.Attribute.Private;
+    order: Schema.Attribute.Relation<'manyToOne', 'api::order.order'>;
+    publishedAt: Schema.Attribute.DateTime;
+    returnedBoxes: Schema.Attribute.Component<'grow.box-group', true>;
+    state: Schema.Attribute.Enumeration<
+      ['PENDING', 'PACKED', 'ON_WAY', 'DELIVERED']
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiBatchHarvestBatchHarvest
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'batch_harvests';
+  info: {
+    description: '';
+    displayName: 'BatchHarvest';
+    pluralName: 'batch-harvests';
+    singularName: 'batch-harvest';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    batch_deliveries: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::batch-delivery.batch-delivery'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    crop_cycle_harvests: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::crop-cycle-harvest.crop-cycle-harvest'
+    >;
+    date: Schema.Attribute.Date;
+    harvestedCrops: Schema.Attribute.Component<'grow.crop-batch', true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::batch-harvest.batch-harvest'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    usedHarvest: Schema.Attribute.Component<'grow.crop-batch', true>;
+  };
+}
+
 export interface ApiBatchBatch extends Struct.CollectionTypeSchema {
   collectionName: 'batches';
   info: {
@@ -456,6 +537,10 @@ export interface ApiBatchBatch extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    deliveries: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::delivery.delivery'
+    >;
     dueToDate: Schema.Attribute.DateTime;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::batch.batch'> &
@@ -532,6 +617,85 @@ export interface ApiBoxBox extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCropCycleHarvestCropCycleHarvest
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'crop_cycle_harvests';
+  info: {
+    description: '';
+    displayName: 'CropCycleHarvest';
+    pluralName: 'crop-cycle-harvests';
+    singularName: 'crop-cycle-harvest';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    batch_harvest: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::batch-harvest.batch-harvest'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    crop_cycle: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::crop-cycle.crop-cycle'
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::crop-cycle-harvest.crop-cycle-harvest'
+    > &
+      Schema.Attribute.Private;
+    performedAt: Schema.Attribute.DateTime;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    weight: Schema.Attribute.Integer;
+  };
+}
+
+export interface ApiCropCycleCropCycle extends Struct.CollectionTypeSchema {
+  collectionName: 'crop_cycles';
+  info: {
+    description: '';
+    displayName: 'CropCycle';
+    pluralName: 'crop-cycles';
+    singularName: 'crop-cycle';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    crop_cycle_harvest: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::crop-cycle-harvest.crop-cycle-harvest'
+    >;
+    harvestDay: Schema.Attribute.Date;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::crop-cycle.crop-cycle'
+    > &
+      Schema.Attribute.Private;
+    moveToLightDay: Schema.Attribute.Date;
+    plant: Schema.Attribute.Relation<'oneToOne', 'api::plant.plant'>;
+    publishedAt: Schema.Attribute.DateTime;
+    seedingDay: Schema.Attribute.Date;
+    state: Schema.Attribute.Enumeration<
+      ['PENDING', 'GERMINATION', 'LIGHT', 'HARVESTED']
+    >;
+    tray: Schema.Attribute.Relation<'oneToOne', 'api::tray.tray'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCustomerCustomer extends Struct.CollectionTypeSchema {
   collectionName: 'customers';
   info: {
@@ -565,9 +729,90 @@ export interface ApiCustomerCustomer extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiDayActionDayAction extends Struct.CollectionTypeSchema {
+  collectionName: 'day_actions';
+  info: {
+    description: '';
+    displayName: 'DayAction';
+    pluralName: 'day-actions';
+    singularName: 'day-action';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    active: Schema.Attribute.Boolean;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    DayInWeek: Schema.Attribute.Enumeration<
+      ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
+    >;
+    deactivatedAt: Schema.Attribute.Date;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::day-action.day-action'
+    > &
+      Schema.Attribute.Private;
+    operation_plan: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::operation-plan.operation-plan'
+    >;
+    order: Schema.Attribute.Relation<'oneToOne', 'api::order.order'>;
+    plant: Schema.Attribute.Relation<'oneToOne', 'api::plant.plant'>;
+    publishedAt: Schema.Attribute.DateTime;
+    trayCount: Schema.Attribute.Integer;
+    type: Schema.Attribute.Enumeration<['SEEDING', 'MOVE_TO_LIGHT', 'HARVEST']>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiDayYieldDayYield extends Struct.CollectionTypeSchema {
+  collectionName: 'day_yields';
+  info: {
+    description: '';
+    displayName: 'DayYield';
+    pluralName: 'day-yields';
+    singularName: 'day-yield';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    active: Schema.Attribute.Boolean;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    dayInWeek: Schema.Attribute.Enumeration<
+      ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
+    >;
+    deactivatedAt: Schema.Attribute.Date;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::day-yield.day-yield'
+    > &
+      Schema.Attribute.Private;
+    operation_plan: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::operation-plan.operation-plan'
+    >;
+    plant: Schema.Attribute.Relation<'oneToOne', 'api::plant.plant'>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    weight: Schema.Attribute.Integer;
+  };
+}
+
 export interface ApiDeliveryDelivery extends Struct.CollectionTypeSchema {
   collectionName: 'deliveries';
   info: {
+    description: '';
     displayName: 'delivery';
     pluralName: 'deliveries';
     singularName: 'delivery';
@@ -576,7 +821,7 @@ export interface ApiDeliveryDelivery extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
-    action: Schema.Attribute.Relation<'oneToOne', 'api::action.action'>;
+    batch: Schema.Attribute.Relation<'manyToOne', 'api::batch.batch'>;
     box_batches: Schema.Attribute.Relation<
       'oneToMany',
       'api::box-batch.box-batch'
@@ -591,6 +836,7 @@ export interface ApiDeliveryDelivery extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    returned_boxes: Schema.Attribute.Relation<'oneToMany', 'api::box.box'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -621,6 +867,37 @@ export interface ApiGrowStrategyGrowStrategy
     > &
       Schema.Attribute.Private;
     name: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiInventoryInventory extends Struct.SingleTypeSchema {
+  collectionName: 'inventories';
+  info: {
+    displayName: 'inventory';
+    pluralName: 'inventories';
+    singularName: 'inventory';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    boxesSAtCustomer: Schema.Attribute.Integer;
+    boxesSInDepot: Schema.Attribute.Integer;
+    boxesSOnWay: Schema.Attribute.Integer;
+    brokenBoxesS: Schema.Attribute.Integer;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::inventory.inventory'
+    > &
+      Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -659,6 +936,89 @@ export interface ApiMyBillingMyBilling extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiOccupancyOccupancy extends Struct.CollectionTypeSchema {
+  collectionName: 'occupancies';
+  info: {
+    description: '';
+    displayName: 'occupancy';
+    pluralName: 'occupancies';
+    singularName: 'occupancy';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    active: Schema.Attribute.Boolean;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    dayInWeek: Schema.Attribute.Enumeration<
+      ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
+    >;
+    deactivatedAt: Schema.Attribute.Date;
+    germinationCount: Schema.Attribute.Integer;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::occupancy.occupancy'
+    > &
+      Schema.Attribute.Private;
+    onLightCount: Schema.Attribute.Integer;
+    operation_plan: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::operation-plan.operation-plan'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiOperationPlanOperationPlan
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'operation_plans';
+  info: {
+    description: '';
+    displayName: 'OperationPlan';
+    pluralName: 'operation-plans';
+    singularName: 'operation-plan';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    active: Schema.Attribute.Boolean;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    day_actions: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::day-action.day-action'
+    >;
+    day_yields: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::day-yield.day-yield'
+    >;
+    deactivatedAt: Schema.Attribute.Date;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::operation-plan.operation-plan'
+    > &
+      Schema.Attribute.Private;
+    note: Schema.Attribute.String;
+    occupancies: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::occupancy.occupancy'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
   collectionName: 'orders';
   info: {
@@ -672,13 +1032,19 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
   };
   attributes: {
     active: Schema.Attribute.Boolean;
+    batch_deliveries: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::batch-delivery.batch-delivery'
+    >;
     batches: Schema.Attribute.Relation<'oneToMany', 'api::batch.batch'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    cropsToGrow: Schema.Attribute.Component<'grow.crop-batch', true>;
     customer: Schema.Attribute.Relation<'manyToOne', 'api::customer.customer'>;
     deliveryTimes: Schema.Attribute.Component<'time.calendar-rule', false>;
     firstDelivery: Schema.Attribute.Date;
+    itemsForDelivery: Schema.Attribute.Component<'grow.recipe-batch', true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::order.order'> &
       Schema.Attribute.Private;
@@ -710,6 +1076,7 @@ export interface ApiPlantPlant extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    germinationTime: Schema.Attribute.Integer;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::plant.plant'> &
       Schema.Attribute.Private;
@@ -735,6 +1102,7 @@ export interface ApiPriceListPriceList extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    boxList: Schema.Attribute.Component<'office.box-price', true>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -748,6 +1116,39 @@ export interface ApiPriceListPriceList extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String;
     orders: Schema.Attribute.Relation<'oneToMany', 'api::order.order'>;
     publishedAt: Schema.Attribute.DateTime;
+    recipeList: Schema.Attribute.Component<'office.recipe-price', true>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiRecipeRecipe extends Struct.CollectionTypeSchema {
+  collectionName: 'recipes';
+  info: {
+    description: '';
+    displayName: 'Recipe';
+    pluralName: 'recipes';
+    singularName: 'recipe';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    code: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    items: Schema.Attribute.Component<'grow.recipe-item', true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::recipe.recipe'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    totalGrowTime: Schema.Attribute.Integer;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -790,15 +1191,16 @@ export interface ApiTrayBatchTrayBatch extends Struct.CollectionTypeSchema {
 export interface ApiTrayTray extends Struct.CollectionTypeSchema {
   collectionName: 'trays';
   info: {
+    description: '';
     displayName: 'Tray';
     pluralName: 'trays';
     singularName: 'tray';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
-    code: Schema.Attribute.String;
+    code: Schema.Attribute.String & Schema.Attribute.Unique;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -807,6 +1209,10 @@ export interface ApiTrayTray extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     placeCode: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    state: Schema.Attribute.Enumeration<
+      ['Empty', 'InUse', 'Washing', 'Damaged']
+    >;
+    totalCycle: Schema.Attribute.Integer;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1324,16 +1730,26 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::action-type.action-type': ApiActionTypeActionType;
       'api::action.action': ApiActionAction;
+      'api::batch-delivery.batch-delivery': ApiBatchDeliveryBatchDelivery;
+      'api::batch-harvest.batch-harvest': ApiBatchHarvestBatchHarvest;
       'api::batch.batch': ApiBatchBatch;
       'api::box-batch.box-batch': ApiBoxBatchBoxBatch;
       'api::box.box': ApiBoxBox;
+      'api::crop-cycle-harvest.crop-cycle-harvest': ApiCropCycleHarvestCropCycleHarvest;
+      'api::crop-cycle.crop-cycle': ApiCropCycleCropCycle;
       'api::customer.customer': ApiCustomerCustomer;
+      'api::day-action.day-action': ApiDayActionDayAction;
+      'api::day-yield.day-yield': ApiDayYieldDayYield;
       'api::delivery.delivery': ApiDeliveryDelivery;
       'api::grow-strategy.grow-strategy': ApiGrowStrategyGrowStrategy;
+      'api::inventory.inventory': ApiInventoryInventory;
       'api::my-billing.my-billing': ApiMyBillingMyBilling;
+      'api::occupancy.occupancy': ApiOccupancyOccupancy;
+      'api::operation-plan.operation-plan': ApiOperationPlanOperationPlan;
       'api::order.order': ApiOrderOrder;
       'api::plant.plant': ApiPlantPlant;
       'api::price-list.price-list': ApiPriceListPriceList;
+      'api::recipe.recipe': ApiRecipeRecipe;
       'api::tray-batch.tray-batch': ApiTrayBatchTrayBatch;
       'api::tray.tray': ApiTrayTray;
       'plugin::content-releases.release': PluginContentReleasesRelease;

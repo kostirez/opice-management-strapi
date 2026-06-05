@@ -4,23 +4,29 @@
   "info": {
     "singularName": "delivery",
     "pluralName": "deliveries",
-    "displayName": "delivery"
+    "displayName": "delivery",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
   },
   "attributes": {
-    "action": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::action.action",
-      "inversedBy": "delivery"
-    },
     "box_batches": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::box-batch.box-batch",
       "mappedBy": "delivery"
+    },
+    "batch": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::batch.batch",
+      "inversedBy": "deliveries"
+    },
+    "returned_boxes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::box.box"
     }
   }
 }

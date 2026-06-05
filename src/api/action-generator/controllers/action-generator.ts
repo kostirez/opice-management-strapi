@@ -3,7 +3,19 @@
  */
 import {generateActionsForBatch, generateBatchesForDates, generateSingleBatch} from "../../../helpers/generate";
 
+import {migrateActionsToDeliveries} from "../../../../scripts/migrate-deliveries";
+
 export default {
+  migrate: async (ctx) => {
+    const { startDate, endDate, orderId } = ctx.request.body;
+    try {
+      await migrateActionsToDeliveries({ startDate, endDate, orderId });
+      ctx.body = 'Migration completed';
+    } catch (err) {
+      console.error(err);
+      ctx.throw(500, err);
+    }
+  },
   exampleAction: async (ctx, next) => {
     const data= ctx.request.body;
     try {

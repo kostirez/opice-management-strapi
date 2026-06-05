@@ -22,6 +22,9 @@
     },
     "timeToGrow": {
       "type": "integer"
+    },
+    "germinationTime": {
+      "type": "integer"
     }
   }
 }

@@ -1,0 +1,59 @@
+{
+  "kind": "collectionType",
+  "collectionName": "batch_deliveries",
+  "info": {
+    "singularName": "batch-delivery",
+    "pluralName": "batch-deliveries",
+    "displayName": "BatchDelivery",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "deliveredAt": {
+      "type": "datetime"
+    },
+    "state": {
+      "type": "enumeration",
+      "enum": [
+        "PENDING",
+        "PACKED",
+        "ON_WAY",
+        "DELIVERED"
+      ]
+    },
+    "order": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::order.order",
+      "inversedBy": "batch_deliveries"
+    },
+    "batch_harvest": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::batch-harvest.batch-harvest",
+      "inversedBy": "batch_deliveries"
+    },
+    "handedBoxes": {
+      "type": "component",
+      "repeatable": true,
+      "component": "grow.box-group"
+    },
+    "returnedBoxes": {
+      "type": "component",
+      "repeatable": true,
+      "component": "grow.box-group"
+    },
+    "expectedItems": {
+      "type": "component",
+      "repeatable": true,
+      "component": "grow.recipe-batch"
+    },
+    "deliveredItems": {
+      "type": "component",
+      "repeatable": true,
+      "component": "grow.recipe-batch"
+    }
+  }
+}

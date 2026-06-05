@@ -1,6 +1,6 @@
 import { Context } from 'koa';
 import { parseISO, startOfMonth, endOfMonth } from 'date-fns';
-import { generateInvoicePdf, generateAggregatedInvoicePdf } from '../services/invoice';
+import { generateInvoicePdf, generateAggregatedInvoicePdf, generateBoxInvoicePdf, generateBatchDeliveryInvoicePdf } from '../services/invoice';
 
 export default {
     async generatePdf(ctx: Context) {
@@ -44,7 +44,8 @@ export default {
                         plant: true
                     }
                 },
-
+                recipe: true,
+                unit: true
             },
         });
         const customer = await strapi.entityService.findMany('api::customer.customer', {
@@ -64,6 +65,11 @@ export default {
                                 list:{
                                     populate: {
                                         plant: true,
+                                    }
+                                },
+                                recipeList: {
+                                    populate: {
+                                        recipe: true
                                     }
                                 }
                             },
@@ -94,6 +100,101 @@ export default {
         // Set headers to trigger download
         ctx.set('Content-Type', 'application/pdf');
         ctx.set('Content-Disposition', `attachment; filename="invoice-${month}.pdf"`);
+        ctx.body = pdfBuffer;
+    },
+
+    async generateBoxPdf(ctx: Context) {
+        const { customerId, month } = ctx.params;
+
+        if (!customerId || !month) {
+            return ctx.badRequest('Missing customerId or month');
+        }
+
+        const parsedMonth = parseISO(month);
+        const start = startOfMonth(parsedMonth);
+        const end = endOfMonth(parsedMonth);
+
+        console.log('zacatek konec',start, end);
+
+        // Fetch batches for this customer that have deliveries in this month
+        const batches = await strapi.entityService.findMany('api::batch.batch', {
+            filters: {
+                dueToDate: {
+                    $gte: start,
+                    $lte: end,
+                },
+                order: {
+                    customer: {
+                        id: customerId,
+                    },
+                },
+            },
+            populate: {
+                deliveries: {
+                    populate: {
+                        box_batches: {
+                            populate: {
+                                plant: true,
+                            }
+                        }
+                    }
+                },
+            },
+        });
+
+        const customer = await strapi.entityService.findMany('api::customer.customer', {
+            filters: {
+                id: customerId,
+            },
+            populate: {
+                billing: {
+                    populate: {
+                        address: true
+                    }
+                },
+                orders: {
+                    populate: {
+                        price_list: {
+                            populate: {
+                                list:{
+                                    populate: {
+                                        plant: true,
+                                    }
+                                },
+                                boxList:{
+                                    populate: {
+                                        plant: true,
+                                    }
+                                }
+                            },
+                        }
+                    },
+                },
+            }
+        });
+
+        const me = await strapi.entityService.findMany('api::my-billing.my-billing', {
+            populate: {
+                billing: {
+                    populate: {
+                        address: true
+                    }
+                }
+            }
+        });
+
+        if (!batches || batches.length === 0) {
+            return ctx.notFound('NgroupDeliveriesByDateo deliveries found for this customer and month');
+        }
+
+        // Generate PDF buffer
+        const pdfBuffer = await generateBoxInvoicePdf(batches, customer[0], me, parsedMonth);
+
+        console.log('batches', batches)
+
+        // Set headers to trigger download
+        ctx.set('Content-Type', 'application/pdf');
+        ctx.set('Content-Disposition', `attachment; filename="invoice-box-${month}.pdf"`);
         ctx.body = pdfBuffer;
     },
 
@@ -135,6 +236,8 @@ export default {
                         plant: true
                     }
                 },
+                recipe: true,
+                unit: true
             },
         });
 
@@ -155,6 +258,11 @@ export default {
                                 list: {
                                     populate: {
                                         plant: true,
+                                    }
+                                },
+                                recipeList: {
+                                    populate: {
+                                        recipe: true
                                     }
                                 }
                             },
@@ -185,6 +293,94 @@ export default {
         // Set headers to trigger download
         ctx.set('Content-Type', 'application/pdf');
         ctx.set('Content-Disposition', `attachment; filename="invoice-aggregated.pdf"`);
+        ctx.body = pdfBuffer;
+    },
+
+    async generateBatchDeliveryPdf(ctx: Context) {
+        const { customerId, month } = ctx.params;
+
+        if (!customerId || !month) {
+            return ctx.badRequest('Missing customerId or month');
+        }
+
+        const parsedMonth = parseISO(month);
+        const start = startOfMonth(parsedMonth);
+        const end = endOfMonth(parsedMonth);
+
+        // Fetch batch deliveries for this customer in this month
+        const deliveries = await strapi.entityService.findMany('api::batch-delivery.batch-delivery', {
+            filters: {
+                state: 'DELIVERED',
+                deliveredAt: {
+                    $gte: start,
+                    $lte: end,
+                },
+                order: {
+                    customer: {
+                        id: customerId,
+                    },
+                },
+            },
+            populate: {
+                deliveredItems: {
+                    populate: {
+                        recipe: true,
+                    }
+                },
+            },
+        });
+
+        const customer = await strapi.entityService.findMany('api::customer.customer', {
+            filters: {
+                id: customerId,
+            },
+            populate: {
+                billing: {
+                    populate: {
+                        address: true
+                    }
+                },
+                orders: {
+                    populate: {
+                        price_list: {
+                            populate: {
+                                list:{
+                                    populate: {
+                                        plant: true,
+                                    }
+                                },
+                                recipeList: {
+                                    populate: {
+                                        recipe: true
+                                    }
+                                }
+                            },
+                        }
+                    },
+                },
+            }
+        });
+
+        const me = await strapi.entityService.findMany('api::my-billing.my-billing', {
+            populate: {
+                billing: {
+                    populate: {
+                        address: true
+                    }
+                }
+            }
+        });
+
+        if (!deliveries || deliveries.length === 0) {
+            return ctx.notFound('No deliveries found for this customer and month');
+        }
+
+        // Generate PDF buffer
+        const pdfBuffer = await generateBatchDeliveryInvoicePdf(deliveries, customer[0], me[0] || me, parsedMonth);
+
+        // Set headers to trigger download
+        ctx.set('Content-Type', 'application/pdf');
+        ctx.set('Content-Disposition', `attachment; filename="invoice-delivery-${month}.pdf"`);
         ctx.body = pdfBuffer;
     }
 };
