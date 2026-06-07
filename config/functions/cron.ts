@@ -1,4 +1,4 @@
-import { generateBatch } from "../../src/helpers/generate";
+// import { generateBatch } from "../../src/helpers/generate";
 
 export default {
     /**
@@ -6,8 +6,8 @@ export default {
      * Every day at 3am.
      */
 
-    "0 3 * * *": async ({ strapi }) => {
-        console.log('start')
-        // await generateBatch();
-    },
+    // "0 3 * * *": async ({ strapi }) => {
+    //     console.log('start')
+    //     // await generateBatch();
+    // },
 };

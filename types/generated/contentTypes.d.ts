@@ -369,76 +369,6 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiActionTypeActionType extends Struct.CollectionTypeSchema {
-  collectionName: 'action_types';
-  info: {
-    description: '';
-    displayName: 'actionType';
-    pluralName: 'action-types';
-    singularName: 'action-type';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::action-type.action-type'
-    > &
-      Schema.Attribute.Private;
-    name: Schema.Attribute.String;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
-export interface ApiActionAction extends Struct.CollectionTypeSchema {
-  collectionName: 'actions';
-  info: {
-    description: '';
-    displayName: 'Action';
-    pluralName: 'actions';
-    singularName: 'action';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    action_type: Schema.Attribute.Relation<
-      'oneToOne',
-      'api::action-type.action-type'
-    >;
-    batch: Schema.Attribute.Relation<'manyToOne', 'api::batch.batch'>;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::action.action'
-    > &
-      Schema.Attribute.Private;
-    plantBatch: Schema.Attribute.Component<'grow.plant-batch', false>;
-    publishedAt: Schema.Attribute.DateTime;
-    state: Schema.Attribute.Enumeration<['waiting', 'running', 'done']>;
-    timeSpent: Schema.Attribute.Integer;
-    timestamp: Schema.Attribute.DateTime;
-    trayBatches: Schema.Attribute.Relation<
-      'manyToMany',
-      'api::tray-batch.tray-batch'
-    >;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
 export interface ApiBatchDeliveryBatchDelivery
   extends Struct.CollectionTypeSchema {
   collectionName: 'batch_deliveries';
@@ -518,102 +448,6 @@ export interface ApiBatchHarvestBatchHarvest
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     usedHarvest: Schema.Attribute.Component<'grow.crop-batch', true>;
-  };
-}
-
-export interface ApiBatchBatch extends Struct.CollectionTypeSchema {
-  collectionName: 'batches';
-  info: {
-    description: '';
-    displayName: 'Batch';
-    pluralName: 'batches';
-    singularName: 'batch';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    actions: Schema.Attribute.Relation<'oneToMany', 'api::action.action'>;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    deliveries: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::delivery.delivery'
-    >;
-    dueToDate: Schema.Attribute.DateTime;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::batch.batch'> &
-      Schema.Attribute.Private;
-    order: Schema.Attribute.Relation<'manyToOne', 'api::order.order'>;
-    plantsToGrow: Schema.Attribute.Component<'grow.plant-batch', true>;
-    publishedAt: Schema.Attribute.DateTime;
-    state: Schema.Attribute.Enumeration<['waiting', 'running', 'done']>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
-export interface ApiBoxBatchBoxBatch extends Struct.CollectionTypeSchema {
-  collectionName: 'box_batches';
-  info: {
-    description: '';
-    displayName: 'boxBatch';
-    pluralName: 'box-batches';
-    singularName: 'box-batch';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    amount: Schema.Attribute.Integer;
-    boxes: Schema.Attribute.Relation<'oneToMany', 'api::box.box'>;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    delivery: Schema.Attribute.Relation<'manyToOne', 'api::delivery.delivery'>;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::box-batch.box-batch'
-    > &
-      Schema.Attribute.Private;
-    plant: Schema.Attribute.Relation<'oneToOne', 'api::plant.plant'>;
-    publishedAt: Schema.Attribute.DateTime;
-    state: Schema.Attribute.Enumeration<['packed', 'delivered', 'returned']>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
-export interface ApiBoxBox extends Struct.CollectionTypeSchema {
-  collectionName: 'boxes';
-  info: {
-    displayName: 'Box';
-    pluralName: 'boxes';
-    singularName: 'box';
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    code: Schema.Attribute.String;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<'oneToMany', 'api::box.box'> &
-      Schema.Attribute.Private;
-    place: Schema.Attribute.Enumeration<
-      ['stock', 'packed', 'delivering', 'customer', 'returning', 'wash']
-    >;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    used: Schema.Attribute.Boolean;
   };
 }
 
@@ -809,71 +643,6 @@ export interface ApiDayYieldDayYield extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiDeliveryDelivery extends Struct.CollectionTypeSchema {
-  collectionName: 'deliveries';
-  info: {
-    description: '';
-    displayName: 'delivery';
-    pluralName: 'deliveries';
-    singularName: 'delivery';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    batch: Schema.Attribute.Relation<'manyToOne', 'api::batch.batch'>;
-    box_batches: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::box-batch.box-batch'
-    >;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::delivery.delivery'
-    > &
-      Schema.Attribute.Private;
-    publishedAt: Schema.Attribute.DateTime;
-    returned_boxes: Schema.Attribute.Relation<'oneToMany', 'api::box.box'>;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
-export interface ApiGrowStrategyGrowStrategy
-  extends Struct.CollectionTypeSchema {
-  collectionName: 'grow_strategies';
-  info: {
-    description: '';
-    displayName: 'growStrategy';
-    pluralName: 'grow-strategies';
-    singularName: 'grow-strategy';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    actions: Schema.Attribute.Component<'grow.action-time', true>;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::grow-strategy.grow-strategy'
-    > &
-      Schema.Attribute.Private;
-    name: Schema.Attribute.String;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
 export interface ApiInventoryInventory extends Struct.SingleTypeSchema {
   collectionName: 'inventories';
   info: {
@@ -1036,11 +805,9 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
       'oneToMany',
       'api::batch-delivery.batch-delivery'
     >;
-    batches: Schema.Attribute.Relation<'oneToMany', 'api::batch.batch'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    cropsToGrow: Schema.Attribute.Component<'grow.crop-batch', true>;
     customer: Schema.Attribute.Relation<'manyToOne', 'api::customer.customer'>;
     deliveryTimes: Schema.Attribute.Component<'time.calendar-rule', false>;
     firstDelivery: Schema.Attribute.Date;
@@ -1102,11 +869,9 @@ export interface ApiPriceListPriceList extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
-    boxList: Schema.Attribute.Component<'office.box-price', true>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    list: Schema.Attribute.Component<'office.plant-price', true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1149,39 +914,6 @@ export interface ApiRecipeRecipe extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     totalGrowTime: Schema.Attribute.Integer;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
-export interface ApiTrayBatchTrayBatch extends Struct.CollectionTypeSchema {
-  collectionName: 'tray_batches';
-  info: {
-    description: '';
-    displayName: 'TrayBatch';
-    pluralName: 'tray-batches';
-    singularName: 'tray-batch';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    actions: Schema.Attribute.Relation<'manyToMany', 'api::action.action'>;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    expectedGain: Schema.Attribute.Integer;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::tray-batch.tray-batch'
-    > &
-      Schema.Attribute.Private;
-    plant: Schema.Attribute.Relation<'oneToOne', 'api::plant.plant'>;
-    publishedAt: Schema.Attribute.DateTime;
-    realGain: Schema.Attribute.Integer;
-    trays: Schema.Attribute.Relation<'oneToMany', 'api::tray.tray'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1728,20 +1460,13 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
-      'api::action-type.action-type': ApiActionTypeActionType;
-      'api::action.action': ApiActionAction;
       'api::batch-delivery.batch-delivery': ApiBatchDeliveryBatchDelivery;
       'api::batch-harvest.batch-harvest': ApiBatchHarvestBatchHarvest;
-      'api::batch.batch': ApiBatchBatch;
-      'api::box-batch.box-batch': ApiBoxBatchBoxBatch;
-      'api::box.box': ApiBoxBox;
       'api::crop-cycle-harvest.crop-cycle-harvest': ApiCropCycleHarvestCropCycleHarvest;
       'api::crop-cycle.crop-cycle': ApiCropCycleCropCycle;
       'api::customer.customer': ApiCustomerCustomer;
       'api::day-action.day-action': ApiDayActionDayAction;
       'api::day-yield.day-yield': ApiDayYieldDayYield;
-      'api::delivery.delivery': ApiDeliveryDelivery;
-      'api::grow-strategy.grow-strategy': ApiGrowStrategyGrowStrategy;
       'api::inventory.inventory': ApiInventoryInventory;
       'api::my-billing.my-billing': ApiMyBillingMyBilling;
       'api::occupancy.occupancy': ApiOccupancyOccupancy;
@@ -1750,7 +1475,6 @@ declare module '@strapi/strapi' {
       'api::plant.plant': ApiPlantPlant;
       'api::price-list.price-list': ApiPriceListPriceList;
       'api::recipe.recipe': ApiRecipeRecipe;
-      'api::tray-batch.tray-batch': ApiTrayBatchTrayBatch;
       'api::tray.tray': ApiTrayTray;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

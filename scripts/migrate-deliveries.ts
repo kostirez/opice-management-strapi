@@ -33,6 +33,21 @@ export async function migrateActionsToDeliveries({
   }
 
   const deliveryTypeId = actionTypes[0].id;
+  
+  // 1b. Fetch recipes for mapping
+  const recipes = await strapi.entityService.findMany('api::recipe.recipe');
+  const plants = await strapi.entityService.findMany('api::plant.plant');
+
+  const plantToRecipeMap: Record<number, number> = {};
+  for (const plant of plants) {
+    const recipe = recipes.find((r: any) => r.code === plant.code);
+    if (recipe) {
+      console.log(`Mapping plant ${plant.code} to recipe ${recipe.code}`);
+      plantToRecipeMap[plant.id] = recipe.id;
+    }
+  }
+
+  console.log('Recipe mapping completed:', Object.keys(plantToRecipeMap).length, 'plants mapped to', Object.values(plantToRecipeMap).length, 'recipes');
 
   // 2. Build filters for actions
   const filters: any = {
@@ -67,20 +82,38 @@ export async function migrateActionsToDeliveries({
     }
   }) as any[];
 
-  console.log(`Found ${actions.map(a => a.timestamp)} actions to migrate.`);
+  console.log(`Found ${actions.length} actions to migrate.`);
+
+  // 4. Group actions by order and date
+  const groupedActions: Record<string, any[]> = {};
+
+  for (const action of actions) {
+    const orderId = action.batch?.order?.id;
+    if (!orderId) {
+      console.warn(`Action ${action.id} has no associated order via batch. Skipping.`);
+      continue;
+    }
+
+    const date = dayjs(action.timestamp).format('YYYY-MM-DD');
+    const key = `${orderId}_${date}`;
+
+    if (!groupedActions[key]) {
+      groupedActions[key] = [];
+    }
+    groupedActions[key].push(action);
+  }
 
   let migratedCount = 0;
 
-  for (const action of actions) {
+  for (const key of Object.keys(groupedActions)) {
     try {
-      const order = action.batch?.order;
-      if (!order) {
-        console.warn(`Action ${action.id} has no associated order via batch. Skipping.`);
-        continue;
-      }
+      const actionGroup = groupedActions[key];
+      const firstAction = actionGroup[0];
+      const orderId = firstAction.batch.order.id;
+      const timestamp = firstAction.timestamp;
 
-      // 4. Get order for expectedItems
-      const fullOrder = await strapi.entityService.findOne('api::order.order', order.id, {
+      // 5. Get order for expectedItems
+      const fullOrder = await strapi.entityService.findOne('api::order.order', orderId, {
         populate: {
           plantsToGrow: {
             populate: ['plant']
@@ -88,44 +121,44 @@ export async function migrateActionsToDeliveries({
         }
       }) as any;
 
-      const expectedItems = fullOrder.plantsToGrow?.map((item: any) => ({
-        plant: item.plant?.id || item.plant,
-        amount: item.amount,
-        unit: "GRAM"
-      })) || [];
+      const expectedItems = fullOrder.plantsToGrow?.map((item: any) => {
+        const plantId = item.plant?.id || item.plant;
+        return {
+          recipe: plantToRecipeMap[plantId] || null,
+          amount: item.amount,
+          unit: "GRAM"
+        };
+      }) || [];
 
-      // 5. Prepare deliveredItems from action.plantBatch
-      // The user mentioned deliveredItems should be filled. 
-      // In Action, we have plantBatch (single component).
-      const deliveredItems = [];
-      if (action.plantBatch) {
-        deliveredItems.push({
-          plant: action.plantBatch.plant?.id || action.plantBatch.plant,
-          amount: action.plantBatch.amount,
-          // unit is missing in action.plantBatch based on schema, but crop-batch component usually has it.
-          // We might need to guess or take it from order if it's the same plant.
-          unit: 'GRAM'
-        });
+      const deliveredItems: any[] = [];
+      for (const action of actionGroup) {
+        if (action.plantBatch) {
+          const plantId = action.plantBatch.plant?.id || action.plantBatch.plant;
+          deliveredItems.push({
+            recipe: plantToRecipeMap[plantId] || null,
+            amount: action.plantBatch.amount,
+            unit: 'GRAM'
+          });
+        }
       }
 
       // 6. Create Batch Delivery
-      console.log(`Creating delivery for action ${action.id} (Order: ${order.id}, Date: ${action.timestamp})`);
+      console.log(`Creating delivery for ${actionGroup.length} actions (Order: ${orderId}, Date: ${dayjs(timestamp).format('YYYY-MM-DD')})`);
       await strapi.entityService.create('api::batch-delivery.batch-delivery', {
         data: {
-          deliveriedAt: action.timestamp,
+          deliveredAt: dayjs(timestamp).startOf('day').toISOString(),
           state: 'DELIVERED',
-          order: order.id,
+          order: orderId,
           expectedItems: expectedItems,
           deliveredItems: deliveredItems,
-
         }
       });
 
       migratedCount++;
     } catch (err) {
-      console.error(`Failed to migrate action ${action.id}:`, err);
+      console.error(`Failed to migrate group ${key}:`, err);
     }
   }
 
-  console.log(`Migration finished. Migrated ${migratedCount} actions.`);
+  console.log(`Migration finished. Created ${migratedCount} batch deliveries from ${actions.length} actions.`);
 }

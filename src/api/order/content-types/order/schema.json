@@ -33,12 +33,6 @@
       "repeatable": false,
       "component": "time.calendar-rule"
     },
-    "batches": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::batch.batch",
-      "mappedBy": "order"
-    },
     "price_list": {
       "type": "relation",
       "relation": "manyToOne",
@@ -50,11 +44,6 @@
       "relation": "oneToMany",
       "target": "api::batch-delivery.batch-delivery",
       "mappedBy": "order"
-    },
-    "cropsToGrow": {
-      "type": "component",
-      "repeatable": true,
-      "component": "grow.crop-batch"
     },
     "itemsForDelivery": {
       "type": "component",

@@ -1,6 +1,5 @@
-import {BatchBase} from "../../batch/types/batch";
+// import {BatchBase} from "../../batch/types/batch";
 import {Plant} from "../../plant/types/plant";
-import {GrowStrategy} from "../../grow-strategy/types/growStrategy";
 
 export interface OrderBase {
     id: number;
@@ -14,7 +13,7 @@ export interface OrderPopulate {
     plantsToGrow?: {
         id: number;
         plant: Plant;
-        growStrategy: GrowStrategy;
+        growStrategy: any;
         amount: number;
     }[];
     deliveryTimes?: {
@@ -26,10 +25,8 @@ export interface OrderPopulate {
         name: string;
         email: string;
     };
-    batches?: BatchBase[];
 }
 
-export type OrderWithBatches = OrderBase & Pick<OrderPopulate, "batches">;
 export type OrderWithCustomer = OrderBase & Pick<OrderPopulate, "customer">;
 export type OrderWithDeliveryTimes = OrderBase & Pick<OrderPopulate, "deliveryTimes">;
 export type OrderWithPlants = OrderBase & Pick<OrderPopulate, "plantsToGrow">;

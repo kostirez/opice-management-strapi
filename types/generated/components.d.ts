@@ -1,21 +1,5 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
-export interface GrowActionTime extends Struct.ComponentSchema {
-  collectionName: 'components_grow_action_times';
-  info: {
-    description: '';
-    displayName: 'ActionTime';
-    icon: 'rocket';
-  };
-  attributes: {
-    actionType: Schema.Attribute.Relation<
-      'oneToOne',
-      'api::action-type.action-type'
-    >;
-    daysBeforeHarvest: Schema.Attribute.Integer;
-  };
-}
-
 export interface GrowBoxGroup extends Struct.ComponentSchema {
   collectionName: 'components_grow_box_groups';
   info: {
@@ -65,10 +49,6 @@ export interface GrowPlantBatch extends Struct.ComponentSchema {
   };
   attributes: {
     amount: Schema.Attribute.Integer;
-    growStrategy: Schema.Attribute.Relation<
-      'oneToOne',
-      'api::grow-strategy.grow-strategy'
-    >;
     plant: Schema.Attribute.Relation<'oneToOne', 'api::plant.plant'>;
   };
 }
@@ -128,31 +108,6 @@ export interface OfficeBilling extends Struct.ComponentSchema {
   };
 }
 
-export interface OfficeBoxPrice extends Struct.ComponentSchema {
-  collectionName: 'components_office_box_prices';
-  info: {
-    displayName: 'BoxPrice';
-    icon: 'shoppingCart';
-  };
-  attributes: {
-    plant: Schema.Attribute.Relation<'oneToOne', 'api::plant.plant'>;
-    price: Schema.Attribute.Integer;
-    size: Schema.Attribute.Enumeration<['S', 'M', 'L', 'XL']>;
-  };
-}
-
-export interface OfficePlantPrice extends Struct.ComponentSchema {
-  collectionName: 'components_office_plant_prices';
-  info: {
-    displayName: 'PlantPrice';
-    icon: 'priceTag';
-  };
-  attributes: {
-    plant: Schema.Attribute.Relation<'oneToOne', 'api::plant.plant'>;
-    price: Schema.Attribute.Integer;
-  };
-}
-
 export interface OfficeRecipePrice extends Struct.ComponentSchema {
   collectionName: 'components_office_recipe_prices';
   info: {
@@ -196,7 +151,6 @@ export interface TimeDaysInWeek extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
-      'grow.action-time': GrowActionTime;
       'grow.box-group': GrowBoxGroup;
       'grow.crop-batch': GrowCropBatch;
       'grow.delivered-box': GrowDeliveredBox;
@@ -205,8 +159,6 @@ declare module '@strapi/strapi' {
       'grow.recipe-item': GrowRecipeItem;
       'office.address': OfficeAddress;
       'office.billing': OfficeBilling;
-      'office.box-price': OfficeBoxPrice;
-      'office.plant-price': OfficePlantPrice;
       'office.recipe-price': OfficeRecipePrice;
       'time.calendar-rule': TimeCalendarRule;
       'time.days-in-week': TimeDaysInWeek;

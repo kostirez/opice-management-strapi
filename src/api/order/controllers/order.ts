@@ -27,8 +27,8 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
       },
       populate: {
         customer: true,
-        cropsToGrow: {
-          populate: ['plant']
+        itemsForDelivery: {
+          populate: ['recipe']
         },
         deliveryTimes: {
           populate: ['daysInWeek']
@@ -39,9 +39,9 @@ export default factories.createCoreController('api::order.order', ({ strapi }) =
     return orders.map((order: any) => ({
       customerName: order.customer?.name || order.customer?.officialName,
       orderId: order.id,
-      cropsToGrow: (order.cropsToGrow || []).map((item: any) => ({
-        plantId: item.plant?.id,
-        plantName: item.plant?.name,
+      itemsForDelivery: (order.itemsForDelivery || []).map((item: any) => ({
+        recipeId: item.recipe?.id,
+        recipeName: item.recipe?.name,
         amount: item.amount,
         unit: item.unit
       }))
