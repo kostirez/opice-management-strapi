@@ -815,7 +815,6 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::order.order'> &
       Schema.Attribute.Private;
-    plantsToGrow: Schema.Attribute.Component<'grow.plant-batch', true>;
     price_list: Schema.Attribute.Relation<
       'manyToOne',
       'api::price-list.price-list'

@@ -23,11 +23,6 @@
     "firstDelivery": {
       "type": "date"
     },
-    "plantsToGrow": {
-      "type": "component",
-      "repeatable": true,
-      "component": "grow.plant-batch"
-    },
     "deliveryTimes": {
       "type": "component",
       "repeatable": false,
