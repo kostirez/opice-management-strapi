@@ -25,6 +25,9 @@
     },
     "germinationTime": {
       "type": "integer"
+    },
+    "seedsPerTray": {
+      "type": "integer"
     }
   }
 }

@@ -915,6 +915,7 @@ export interface ApiPlantPlant extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     name: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    seedsPerTray: Schema.Attribute.Integer;
     timeToGrow: Schema.Attribute.Integer;
     typeName: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
