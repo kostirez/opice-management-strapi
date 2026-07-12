@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "time_logs",
+  "info": {
+    "singularName": "time-log",
+    "pluralName": "time-logs",
+    "displayName": "TimeLog",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "provoz",
+        "dev_HW",
+        "dev_SW",
+        "finance",
+        "marketing",
+        "sales"
+      ]
+    },
+    "subcategory": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "duration": {
+      "type": "integer"
+    },
+    "performedAt": {
+      "type": "datetime"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

@@ -987,6 +987,45 @@ export interface ApiRecipeRecipe extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiTimeLogTimeLog extends Struct.CollectionTypeSchema {
+  collectionName: 'time_logs';
+  info: {
+    description: '';
+    displayName: 'TimeLog';
+    pluralName: 'time-logs';
+    singularName: 'time-log';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    category: Schema.Attribute.Enumeration<
+      ['provoz', 'dev_HW', 'dev_SW', 'finance', 'marketing', 'sales']
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    duration: Schema.Attribute.Integer;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::time-log.time-log'
+    > &
+      Schema.Attribute.Private;
+    performedAt: Schema.Attribute.DateTime;
+    publishedAt: Schema.Attribute.DateTime;
+    subcategory: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
 export interface ApiTrayTray extends Struct.CollectionTypeSchema {
   collectionName: 'trays';
   info: {
@@ -1544,6 +1583,7 @@ declare module '@strapi/strapi' {
       'api::plant.plant': ApiPlantPlant;
       'api::price-list.price-list': ApiPriceListPriceList;
       'api::recipe.recipe': ApiRecipeRecipe;
+      'api::time-log.time-log': ApiTimeLogTimeLog;
       'api::tray.tray': ApiTrayTray;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
