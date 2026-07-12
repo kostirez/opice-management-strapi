@@ -1,0 +1,23 @@
+{
+  "kind": "collectionType",
+  "collectionName": "grow_room_states",
+  "info": {
+    "singularName": "grow-room-state",
+    "pluralName": "grow-room-states",
+    "displayName": "GrowRoomState"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "time": {
+      "type": "datetime"
+    },
+    "code": {
+      "type": "string"
+    },
+    "value": {
+      "type": "string"
+    }
+  }
+}

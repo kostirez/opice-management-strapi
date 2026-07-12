@@ -643,6 +643,37 @@ export interface ApiDayYieldDayYield extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiGrowRoomStateGrowRoomState
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'grow_room_states';
+  info: {
+    displayName: 'GrowRoomState';
+    pluralName: 'grow-room-states';
+    singularName: 'grow-room-state';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    code: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::grow-room-state.grow-room-state'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    time: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    value: Schema.Attribute.String;
+  };
+}
+
 export interface ApiInventoryInventory extends Struct.SingleTypeSchema {
   collectionName: 'inventories';
   info: {
@@ -1466,6 +1497,7 @@ declare module '@strapi/strapi' {
       'api::customer.customer': ApiCustomerCustomer;
       'api::day-action.day-action': ApiDayActionDayAction;
       'api::day-yield.day-yield': ApiDayYieldDayYield;
+      'api::grow-room-state.grow-room-state': ApiGrowRoomStateGrowRoomState;
       'api::inventory.inventory': ApiInventoryInventory;
       'api::my-billing.my-billing': ApiMyBillingMyBilling;
       'api::occupancy.occupancy': ApiOccupancyOccupancy;
