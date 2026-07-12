@@ -71,5 +71,127 @@ export default ({ strapi }) => ({
     });
 
     return groups;
+  },
+
+  async getDeliveryStats({ orderIds, dateFrom, dateTo }: { orderIds?: string | string[], dateFrom?: string, dateTo?: string }) {
+    const filters: any = {};
+
+    if (orderIds) {
+      filters.order = {
+        id: Array.isArray(orderIds) ? { $in: orderIds } : orderIds
+      };
+    }
+
+    if (dateFrom || dateTo) {
+      filters.deliveredAt = {};
+      if (dateFrom) filters.deliveredAt.$gte = dateFrom;
+      if (dateTo) filters.deliveredAt.$lte = dateTo;
+    }
+
+    const batchDeliveries = await strapi.entityService.findMany('api::batch-delivery.batch-delivery', {
+      filters,
+      populate: {
+        order: {
+          populate: ['deliveryTimes']
+        }
+      },
+      sort: { deliveredAt: 'asc' }
+    });
+
+    return batchDeliveries.map((delivery: any) => {
+      if (!delivery.deliveredAt || !delivery.order?.deliveryTimes?.preferTimeOfDelivery) {
+        return {
+          batchDeliveryId: delivery.id,
+          orderId: delivery.order?.id,
+          deliveredAt: delivery.deliveredAt,
+          preferTimeOfDelivery: delivery.order?.deliveryTimes?.preferTimeOfDelivery,
+          diffMinutes: null
+        };
+      }
+
+      const deliveredAt = dayjs(delivery.deliveredAt);
+      const preferTime = delivery.order.deliveryTimes.preferTimeOfDelivery; // HH:mm:ss.SSS
+
+      // Create a dayjs object for the preferred time on the same day as deliveredAt
+      const [hours, minutes, seconds] = preferTime.split(':').map(Number);
+      const preferredTimeOnDay = deliveredAt.clone()
+        .hour(hours)
+        .minute(minutes)
+        .second(seconds || 0)
+        .millisecond(0);
+
+      const diffMinutes = deliveredAt.diff(preferredTimeOnDay, 'minute');
+
+      return {
+        batchDeliveryId: delivery.id,
+        orderId: delivery.order.id,
+        deliveredAt: delivery.deliveredAt,
+        preferTimeOfDelivery: preferTime,
+        diffMinutes
+      };
+    });
+  },
+
+  async getItemComparisonStats({ orderIds, dateFrom, dateTo }: { orderIds?: string | string[], dateFrom?: string, dateTo?: string }) {
+    const filters: any = {};
+
+    if (orderIds) {
+      filters.order = {
+        id: Array.isArray(orderIds) ? { $in: orderIds } : orderIds
+      };
+    }
+
+    if (dateFrom || dateTo) {
+      filters.deliveredAt = {};
+      if (dateFrom) filters.deliveredAt.$gte = dateFrom;
+      if (dateTo) filters.deliveredAt.$lte = dateTo;
+    }
+
+    const batchDeliveries = await strapi.entityService.findMany('api::batch-delivery.batch-delivery', {
+      filters,
+      populate: {
+        order: true,
+        expectedItems: {
+          populate: ['recipe']
+        },
+        deliveredItems: {
+          populate: ['recipe']
+        }
+      },
+      sort: { deliveredAt: 'asc' }
+    });
+
+    return batchDeliveries.map((delivery: any) => {
+      const expectedSummary = (delivery.expectedItems || []).reduce((acc: any, item: any) => {
+        const recipeId = item.recipe?.id;
+        if (!recipeId) return acc;
+        if (!acc[recipeId]) {
+          acc[recipeId] = { recipeId, name: item.recipe.name, expectedAmount: 0, deliveredAmount: 0 };
+        }
+        acc[recipeId].expectedAmount += item.amount || 0;
+        return acc;
+      }, {});
+
+      (delivery.deliveredItems || []).forEach((item: any) => {
+        const recipeId = item.recipe?.id;
+        if (!recipeId) return;
+        if (!expectedSummary[recipeId]) {
+          expectedSummary[recipeId] = { recipeId, name: item.recipe.name, expectedAmount: 0, deliveredAmount: 0 };
+        }
+        expectedSummary[recipeId].deliveredAmount += item.amount || 0;
+      });
+
+      const items = Object.values(expectedSummary).map((item: any) => ({
+        ...item,
+        difference: item.deliveredAmount - item.expectedAmount
+      }));
+
+      return {
+        batchDeliveryId: delivery.id,
+        orderId: delivery.order?.id,
+        deliveredAt: delivery.deliveredAt,
+        items
+      };
+    });
   }
 });

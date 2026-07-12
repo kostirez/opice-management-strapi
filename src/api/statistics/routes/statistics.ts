@@ -8,5 +8,21 @@ export default {
         auth: false,
       },
     },
+    {
+      method: 'GET',
+      path: '/statistics/delivery-stats',
+      handler: 'statistics.getDeliveryStats',
+      config: {
+        auth: false,
+      },
+    },
+    {
+      method: 'GET',
+      path: '/statistics/item-comparison-stats',
+      handler: 'statistics.getItemComparisonStats',
+      config: {
+        auth: false,
+      },
+    },
   ],
 };
