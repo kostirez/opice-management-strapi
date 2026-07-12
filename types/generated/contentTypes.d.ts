@@ -674,21 +674,19 @@ export interface ApiGrowRoomStateGrowRoomState
   };
 }
 
-export interface ApiInventoryInventory extends Struct.SingleTypeSchema {
+export interface ApiInventoryInventory extends Struct.CollectionTypeSchema {
   collectionName: 'inventories';
   info: {
+    description: '';
     displayName: 'inventory';
     pluralName: 'inventories';
     singularName: 'inventory';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
-    boxesSAtCustomer: Schema.Attribute.Integer;
-    boxesSInDepot: Schema.Attribute.Integer;
-    boxesSOnWay: Schema.Attribute.Integer;
-    brokenBoxesS: Schema.Attribute.Integer;
+    boxes: Schema.Attribute.Component<'grow.box-group', true>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -699,9 +697,46 @@ export interface ApiInventoryInventory extends Struct.SingleTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    seeds: Schema.Attribute.Component<'grow.plant-batch', true>;
+    time: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+  };
+}
+
+export interface ApiInvoiceInvoice extends Struct.CollectionTypeSchema {
+  collectionName: 'invoices';
+  info: {
+    description: '';
+    displayName: 'invoice';
+    pluralName: 'invoices';
+    singularName: 'invoice';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    code: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    issuedAt: Schema.Attribute.Date;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::invoice.invoice'
+    > &
+      Schema.Attribute.Private;
+    order: Schema.Attribute.Relation<'manyToOne', 'api::order.order'>;
+    paidAt: Schema.Attribute.Date;
+    publishedAt: Schema.Attribute.DateTime;
+    type: Schema.Attribute.Enumeration<['regular', 'extra', 'other']> &
+      Schema.Attribute.DefaultTo<'regular'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    value: Schema.Attribute.Decimal;
   };
 }
 
@@ -842,6 +877,7 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
     customer: Schema.Attribute.Relation<'manyToOne', 'api::customer.customer'>;
     deliveryTimes: Schema.Attribute.Component<'time.calendar-rule', false>;
     firstDelivery: Schema.Attribute.Date;
+    invoices: Schema.Attribute.Relation<'oneToMany', 'api::invoice.invoice'>;
     itemsForDelivery: Schema.Attribute.Component<'grow.recipe-batch', true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::order.order'> &
@@ -1499,6 +1535,7 @@ declare module '@strapi/strapi' {
       'api::day-yield.day-yield': ApiDayYieldDayYield;
       'api::grow-room-state.grow-room-state': ApiGrowRoomStateGrowRoomState;
       'api::inventory.inventory': ApiInventoryInventory;
+      'api::invoice.invoice': ApiInvoiceInvoice;
       'api::my-billing.my-billing': ApiMyBillingMyBilling;
       'api::occupancy.occupancy': ApiOccupancyOccupancy;
       'api::operation-plan.operation-plan': ApiOperationPlanOperationPlan;

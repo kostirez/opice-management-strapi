@@ -1,26 +1,28 @@
 {
-  "kind": "singleType",
+  "kind": "collectionType",
   "collectionName": "inventories",
   "info": {
     "singularName": "inventory",
     "pluralName": "inventories",
-    "displayName": "inventory"
+    "displayName": "inventory",
+    "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "attributes": {
-    "boxesSInDepot": {
-      "type": "integer"
+    "time": {
+      "type": "datetime"
     },
-    "boxesSOnWay": {
-      "type": "integer"
+    "seeds": {
+      "type": "component",
+      "repeatable": true,
+      "component": "grow.plant-batch"
     },
-    "boxesSAtCustomer": {
-      "type": "integer"
-    },
-    "brokenBoxesS": {
-      "type": "integer"
+    "boxes": {
+      "type": "component",
+      "repeatable": true,
+      "component": "grow.box-group"
     }
   }
 }

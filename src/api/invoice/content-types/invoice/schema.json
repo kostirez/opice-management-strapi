@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "invoices",
+  "info": {
+    "singularName": "invoice",
+    "pluralName": "invoices",
+    "displayName": "invoice",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "order": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::order.order",
+      "inversedBy": "invoices"
+    },
+    "issuedAt": {
+      "type": "date"
+    },
+    "value": {
+      "type": "decimal"
+    },
+    "paidAt": {
+      "type": "date"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "regular",
+        "extra",
+        "other"
+      ],
+      "default": "regular"
+    },
+    "code": {
+      "type": "string"
+    }
+  }
+}
