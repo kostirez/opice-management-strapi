@@ -83,6 +83,7 @@ export default factories.createCoreController('api::crop-cycle.crop-cycle', ({ s
         state: entry.state,
         harvestId: entry.crop_cycle_harvest?.id,
         trayCode: entry.tray?.code,
+        trayPlace: entry.tray?.placeCode,
       }));
     },
 
