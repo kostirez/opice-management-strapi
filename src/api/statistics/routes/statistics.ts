@@ -24,5 +24,13 @@ export default {
         auth: false,
       },
     },
+    {
+      method: 'GET',
+      path: '/statistics/time-log-stats',
+      handler: 'statistics.getTimeLogStats',
+      config: {
+        auth: false,
+      },
+    },
   ],
 };

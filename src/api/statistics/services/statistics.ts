@@ -193,5 +193,35 @@ export default ({ strapi }) => ({
         items
       };
     });
+  },
+
+  async getTimeLogStats({ category, userId, dateFrom, dateTo }: { category?: string, userId?: string, dateFrom?: string, dateTo?: string }) {
+    const filters: any = {};
+
+    if (category) {
+      filters.category = category;
+    }
+
+    if (userId) {
+      filters.user = userId;
+    }
+
+    if (dateFrom || dateTo) {
+      filters.performedAt = {};
+      if (dateFrom) filters.performedAt.$gte = dateFrom;
+      if (dateTo) filters.performedAt.$lte = dateTo;
+    }
+
+    const timeLogs = await strapi.entityService.findMany('api::time-log.time-log', {
+      filters,
+    });
+
+    const totalDuration = timeLogs.reduce((acc: number, log: any) => acc + (log.duration || 0), 0);
+
+    return {
+      totalDuration,
+      totalHours: totalDuration / 60,
+      logCount: timeLogs.length,
+    };
   }
 });

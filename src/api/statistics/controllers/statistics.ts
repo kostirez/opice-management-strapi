@@ -23,4 +23,13 @@ export default ({ strapi }) => ({
       dateTo,
     });
   },
+  async getTimeLogStats(ctx) {
+    const { category, userId, dateFrom, dateTo } = ctx.query;
+    return await strapi.service('api::statistics.statistics').getTimeLogStats({
+      category,
+      userId,
+      dateFrom,
+      dateTo,
+    });
+  },
 });
