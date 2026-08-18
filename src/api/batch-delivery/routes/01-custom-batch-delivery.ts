@@ -9,5 +9,23 @@ export default {
         middlewares: [],
       },
     },
+    {
+      method: 'GET',
+      path: '/batch-deliveries/overview',
+      handler: 'batch-delivery.getOverview',
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: 'GET',
+      path: '/batch-deliveries/details/:id',
+      handler: 'batch-delivery.getDetailById',
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
   ],
 };
