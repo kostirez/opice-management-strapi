@@ -521,7 +521,7 @@ export interface ApiCropCycleCropCycle extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     seedingDay: Schema.Attribute.Date;
     state: Schema.Attribute.Enumeration<
-      ['PENDING', 'GERMINATION', 'LIGHT', 'HARVESTED']
+      ['PENDING', 'GERMINATION', 'LIGHT', 'HARVESTED', 'SPOILED']
     >;
     tray: Schema.Attribute.Relation<'oneToOne', 'api::tray.tray'>;
     updatedAt: Schema.Attribute.DateTime;

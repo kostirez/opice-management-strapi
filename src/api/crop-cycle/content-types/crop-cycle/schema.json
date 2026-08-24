@@ -31,7 +31,8 @@
         "PENDING",
         "GERMINATION",
         "LIGHT",
-        "HARVESTED"
+        "HARVESTED",
+        "SPOILED"
       ]
     },
     "crop_cycle_harvest": {
